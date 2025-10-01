@@ -16,31 +16,29 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.dto.response.UserResponseDTO;
 import ru.example.cloudfiles.entity.User;
+import ru.example.cloudfiles.mapper.UserMapper;
 import ru.example.cloudfiles.repository.UserRepository;
 import ru.example.cloudfiles.security.CustomUserDetails;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
 
           private final UserRepository userRepository;
-
           private final PasswordEncoder passwordEncoder;
-
           private final UserDetailsService userDetailsService;
-
           private final SecurityContextRepository securityContextRepository;
+          private final UserMapper userMapper;
 
-          @Transactional
           public User signUp(UserRequestDTO request,
                              HttpServletRequest httpServletRequest,
                              HttpServletResponse httpServletResponse) {
 
-                    User savedUser = userRepository.save(new User(request.username(),
-                              passwordEncoder.encode(request.password())));
+                    User user = userMapper.toEntityWithPassword(request, passwordEncoder);
+                    User savedUser = userRepository.save(user);
 
                     authenticateUser(savedUser, httpServletRequest, httpServletResponse);
-
                     return savedUser;
           }
 
@@ -57,14 +55,13 @@ public class AuthService {
                     }
 
                     authenticateUser(userDetails, httpServletRequest, httpServletResponse);
-
-                    return new UserResponseDTO(userDetails.getUsername());
+                    return userMapper.toDto(userDetails);
           }
 
           public void authenticateUser(User user,
                                        HttpServletRequest httpRequest,
                                        HttpServletResponse httpResponse) {
-                    CustomUserDetails userDetails = new CustomUserDetails(user);
+                    CustomUserDetails userDetails = userMapper.toCustomUserDetails(user);
                     authenticateUser(userDetails, httpRequest, httpResponse);
           }
 

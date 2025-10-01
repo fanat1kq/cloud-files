@@ -1,59 +1,55 @@
 package ru.example.cloudfiles.service.storage;
 
-import io.minio.StatObjectResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.mapper.ResourceMapper;
-import ru.example.cloudfiles.mapper.model.PathInfo;
 import ru.example.cloudfiles.mapper.model.ResourceMappingData;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ResourceInfoService {
-
-          private static final String USER_DIRECTORY = "user-%d-files/";
 
           private final MinioService minioService;
 
           private final ResourceMapper resourceMapper;
 
-          public ResourceInfoResponseDTO getResourceInfo(long userId, String objectName)
-                    throws Exception {
-                    StatObjectResponse stat = minioService.getObjectStats(objectName);
+          @SneakyThrows
+          public ResourceInfoResponseDTO getResourceInfo(long userId, String objectName) {
 
-                    String userPrefix = USER_DIRECTORY.formatted(userId);
-                    boolean isDirectory = objectName.endsWith("/") || stat.size() == 0;
-                    String relativePath = objectName.substring(userPrefix.length());
+                    var stat = minioService.getObjectStats(objectName);
+                    String userPrefix = "user-%d-files/".formatted(userId);
 
-                    ResourceMappingData mappingData = new ResourceMappingData(
-                              objectName,
-                              relativePath,
-                              stat.size(),
-                              isDirectory,
-                              userId
+                    return resourceMapper.toResourceInfoDTO(
+                              new ResourceMappingData(objectName,
+                                        objectName.substring(userPrefix.length()),
+                                        stat.size(), objectName.endsWith("/") || stat.size() == 0,
+                                        userId),
+                              resourceMapper.extractPathInfo(
+                                        objectName.substring(userPrefix.length()),
+                                        objectName.endsWith("/") || stat.size() == 0)
                     );
-
-                    PathInfo pathInfo =
-                              resourceMapper.extractPathInfo(relativePath, isDirectory);
-
-                    return resourceMapper.toResourceInfoDTO(mappingData, pathInfo);
           }
 
           public List<ResourceInfoResponseDTO> getResourcesInfo(long userId,
                                                                 List<String> objectNames) {
+
                     return objectNames.stream()
-                              .map(objectName -> {
+                              .map(name -> {
                                         try {
-                                                  return getResourceInfo(userId, objectName);
+                                                  return getResourceInfo(userId, name);
                                         } catch (Exception e) {
-                                                  throw new RuntimeException(
-                                                            "Failed to get resource info for: " +
-                                                                      objectName, e);
+                                                  log.warn("Failed to get info for: {}", name, e);
+                                                  return null;
                                         }
                               })
+                              .filter(Objects::nonNull)
                               .toList();
           }
 }

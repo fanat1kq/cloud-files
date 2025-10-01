@@ -1,8 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env.local[.properties]
   datasource:
-    username: nikita
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/my_db
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
   jpa:
     hibernate:
       ddl-auto: none
@@ -11,10 +13,10 @@ spring:
     default-schema: schema
     liquibase-schema: my_liquibase_schema
 minio:
-  url: http://localhost:9000
-  access-key: admin
-  secret-key: password
-  bucket: user-files
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
 
 application:
   default-bucket-name: user-files
