@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS schema;
+CREATE SCHEMA IF NOT EXISTS my_liquibase_schema;

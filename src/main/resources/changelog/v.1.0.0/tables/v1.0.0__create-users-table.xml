@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-users-table-001" author="dev_team">
+        <createTable schemaName="schema" tableName="users" remarks="Таблица пользователей системы">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(250)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <!--            <column name="email" type="VARCHAR(100)">-->
+            <!--                <constraints nullable="false" unique="true"/>-->
+            <!--            </column>-->
+            <!--            <column name="first_name" type="VARCHAR(100)">-->
+            <!--                <constraints nullable="false"/>-->
+            <!--            </column>-->
+            <!--            <column name="last_name" type="VARCHAR(100)">-->
+            <!--                <constraints nullable="false"/>-->
+            <!--            </column>-->
+            <!--            <column name="created_at" type="TIMESTAMP">-->
+            <!--                <constraints nullable="false"/>-->
+            <!--            </column>-->
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

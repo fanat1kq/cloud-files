@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    username: nikita
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/my_db
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
+    default-schema: schema
+    liquibase-schema: my_liquibase_schema
+minio:
+  url: http://localhost:9000
+  access-key: admin
+  secret-key: password
+  bucket: user-files
+
+application:
+  default-bucket-name: user-files
+server:
+  servlet:
+    session:
+      timeout: 1800
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
+    disable-swagger-default-url: true

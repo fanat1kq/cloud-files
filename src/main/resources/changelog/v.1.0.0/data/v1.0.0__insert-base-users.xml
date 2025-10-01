@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-base-users-001" author="dev_team">
+        <insert schemaName="schema" tableName="users">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$/J1w7piDYBxj3A0GSUkiTeg4sn5JDb4BLH3bNeORCyVS6ubSR3E66"/>
+            <!--            <column name="email" value="admin@company.com"/>-->
+            <!--            <column name="first_name" value="Системный"/>-->
+            <!--            <column name="last_name" value="Администратор"/>-->
+            <!--            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>-->
+        </insert>
+
+        <insert schemaName="schema" tableName="users">
+            <column name="username" value="manager1"/>
+            <column name="password" value="$2a$10$rA53Vvir.PVRBLlbcULFT./XXCunYZZSlRYUdoxvT2Gd7uUnsiD12"/>
+            <!--            <column name="email" value="manager1@company.com"/>-->
+            <!--            <column name="first_name" value="Петр"/>-->
+            <!--            <column name="last_name" value="Менеджеров"/>-->
+            <!--            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>-->
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

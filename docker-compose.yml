@@ -1,0 +1,48 @@
+services:
+
+  file-storage-redis:
+    image: redis:latest
+    container_name: session-storage-redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
+    env_file:
+      - .env
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - file-storage-network
+
+  minio-create-buckets:
+    image: minio/minio
+    #    depends_on:
+    #      - file-storage-minio
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"  # API порт
+      - "9001:9001"  # Console порт
+    command: server /data --console-address ":9001"
+    #    volumes:
+    #      - minio_data:/data
+    networks:
+      - file-storage-network
+  file-storage-frontend:
+    build:
+      context: ./frontend/cloud-storage-frontend-master/
+      dockerfile: Dockerfile
+    container_name: file-storage-frontend
+    ports:
+      - "8082:80"
+    networks:
+      - file-storage-network
+volumes:
+  minio-data:
+  redis-data:
+
+networks:
+  file-storage-network:
+    driver: bridge
