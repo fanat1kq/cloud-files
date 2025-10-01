@@ -6,7 +6,7 @@ target/
 
 mvnw
 mvnw.cmd
-.mvn
+.mvn/
 .idea
 .env
 
