@@ -1,6 +1,5 @@
 package ru.example.cloudfiles.controller;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +46,7 @@ public class ResourceController {
           @ResponseStatus(HttpStatus.OK)
           @GetResourceDocs
           public ResourceInfoResponseDTO getResource(
-                                                     @RequestParam(name = "path")
+                                                     @RequestParam
                                                      @NotBlank(message = "Parameter \"path\" must not be blank")
                                                      String path,
                                                      @AuthenticationPrincipal
@@ -60,8 +59,7 @@ public class ResourceController {
           @DeleteMapping
           @ResponseStatus(HttpStatus.NO_CONTENT)
           @DeleteResourceDocs
-          public void deleteResource(@Valid
-                                     @RequestParam(name = "path")
+          public void deleteResource(@RequestParam
                                      @NotBlank(message = "Parameter \"path\" must not be blank")
                                      String path,
                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -72,7 +70,7 @@ public class ResourceController {
           @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
           @ResponseStatus(HttpStatus.ACCEPTED)
           @DownloadResourceDocs
-          public ResponseEntity<StreamingResponseBody> downloadResource(@RequestParam(name = "path")
+          public ResponseEntity<StreamingResponseBody> downloadResource(@RequestParam
                                                                         @NotBlank(message = "Parameter \"path\" must not be blank")
                                                                         String path,
                                                                         @AuthenticationPrincipal
@@ -104,10 +102,10 @@ public class ResourceController {
           @GetMapping("/move")
           @ResponseStatus(HttpStatus.OK)
           @MoveResourceDocs
-          public ResourceInfoResponseDTO move(@RequestParam(name = "from")
+          public ResourceInfoResponseDTO move(@RequestParam
                                               @NotBlank(message = "Parameter \"from\" must not be blank")
                                               String from,
-                                              @RequestParam(name = "to")
+                                              @RequestParam
                                               @NotBlank(message = "Parameter \"to\" must not be blank")
                                               String to,
                                               @AuthenticationPrincipal
@@ -120,12 +118,11 @@ public class ResourceController {
           @GetMapping("/search")
           @ResponseStatus(HttpStatus.OK)
           @SearchResourceDocs
-          public List<ResourceInfoResponseDTO> search(@RequestParam(name = "query")
+          public List<ResourceInfoResponseDTO> search(@RequestParam
                                                       @NotBlank(message = "Parameter \"query\" must not be blank")
                                                       String query,
                                                       @AuthenticationPrincipal
-                                                      CustomUserDetails userDetails)
-                    throws Exception {
+                                                      CustomUserDetails userDetails) {
 
                     return s3UserService.search(userDetails.getId(), query);
           }
@@ -135,12 +132,11 @@ public class ResourceController {
           @ResponseStatus(HttpStatus.CREATED)
           @UploadResourceDocs
           public List<ResourceInfoResponseDTO> upload(
-                    @RequestParam(name = "path", defaultValue = "") String path,
+                    @RequestParam String path,
                     @RequestParam(name = "object")
                     MultipartFile[] files,
                     @AuthenticationPrincipal
-                    CustomUserDetails userDetails)
-                    throws Exception {
+                    CustomUserDetails userDetails) {
 
                     return s3UserService.upload(userDetails.getId(), path, files);
           }

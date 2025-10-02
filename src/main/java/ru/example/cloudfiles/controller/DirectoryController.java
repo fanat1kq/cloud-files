@@ -42,7 +42,7 @@ public class DirectoryController {
           @GetMapping
           @ResponseStatus(HttpStatus.OK)
           @GetDirectoriesDocs
-          public List<ResourceInfoResponseDTO> getDirectory(@RequestParam(name = "path")
+          public List<ResourceInfoResponseDTO> getDirectory(@RequestParam
                                                             String path,
                                                             @AuthenticationPrincipal
                                                             CustomUserDetails userDetails) {
@@ -53,7 +53,7 @@ public class DirectoryController {
           @PostMapping
           @ResponseStatus(HttpStatus.CREATED)
           @CreateDirectoryDocs
-          public ResourceInfoResponseDTO createDirectory(@RequestParam(name = "path")
+          public ResourceInfoResponseDTO createDirectory(@RequestParam
                                                          @NotBlank(message = "Parameter \"path\" must not be blank")
                                                          String path,
                                                          @AuthenticationPrincipal

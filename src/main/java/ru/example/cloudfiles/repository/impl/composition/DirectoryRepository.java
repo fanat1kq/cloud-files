@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.repository.impl;
+package ru.example.cloudfiles.repository.impl.composition;
 
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
@@ -7,11 +7,9 @@ import io.minio.Result;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.example.cloudfiles.exception.S3RepositoryException;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.LinkedHashSet;
 import java.util.List;

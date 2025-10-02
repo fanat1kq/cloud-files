@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.repository.impl;
+package ru.example.cloudfiles.repository.impl.composition;
 
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -7,7 +7,6 @@ import io.minio.StatObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.example.cloudfiles.entity.Resource;
 import ru.example.cloudfiles.exception.S3RepositoryException;
@@ -41,7 +40,7 @@ public class ObjectRepository {
                               if ("NoSuchKey".equals(e.errorResponse().code())) {
                                         throw new ResourceNotFoundException(path);
                               }
-                              throw new S3RepositoryException("Repository exception", e);
+                              throw new S3RepositoryException("Failed to find resource by path", e);
                     } catch (Exception e) {
                               throw new S3RepositoryException("Repository exception", e);
                     }
@@ -57,7 +56,7 @@ public class ObjectRepository {
                                         .stream(dataStream, -1, 10485760)
                                         .build());
                     } catch (Exception e) {
-                              throw new S3RepositoryException("Repository exception", e);
+                              throw new S3RepositoryException("Failed to save resource", e);
                     }
           }
 
@@ -76,7 +75,7 @@ public class ObjectRepository {
                               }
                               throw new S3RepositoryException("Repository exception", e);
                     } catch (Exception e) {
-                              throw new S3RepositoryException("Repository exception", e);
+                              throw new S3RepositoryException("Object doesn`t exist", e);
                     }
           }
 }

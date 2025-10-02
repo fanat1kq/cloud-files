@@ -1,9 +1,7 @@
-package ru.example.cloudfiles.repository.impl;
+package ru.example.cloudfiles.repository.impl.composition;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.example.cloudfiles.exception.EmptyPathException;
-import ru.example.cloudfiles.exception.ForbiddenSymbolException;
 
 import java.util.regex.Pattern;
 

@@ -1,17 +1,16 @@
-package ru.example.cloudfiles.repository;
+package ru.example.cloudfiles.repository.impl;
 
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
-import io.minio.RemoveObjectsArgs;
-import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.example.cloudfiles.entity.Resource;
 import ru.example.cloudfiles.exception.S3RepositoryException;
-import ru.example.cloudfiles.repository.impl.DirectoryRepository;
-import ru.example.cloudfiles.repository.impl.ObjectRepository;
-import ru.example.cloudfiles.repository.impl.PathValidator;
+import ru.example.cloudfiles.repository.S3Repository;
+import ru.example.cloudfiles.repository.impl.composition.DirectoryRepository;
+import ru.example.cloudfiles.repository.impl.composition.ObjectRepository;
+import ru.example.cloudfiles.repository.impl.composition.PathValidator;
 
 import java.io.InputStream;
 import java.util.List;

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.exception.InvalidSearchQueryException;
 import ru.example.cloudfiles.mapper.DtoMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.config.properties.S3Properties;
@@ -23,7 +24,9 @@ public class SearchService {
           private final DtoMapper dtoMapper;
 
           public List<ResourceInfoResponseDTO> search(long userId, String query) {
-                    String searchQuery = query.toLowerCase();
+
+                    String searchQuery = validateAndNormalizeQuery(query);
+
                     return findAllNames(userId, "", true).stream()
                               .map(name -> paths.toUserPath(userId, name))
                               .filter(userPath -> userPath.toLowerCase().contains(searchQuery))
@@ -39,5 +42,11 @@ public class SearchService {
           private List<String> findAllNames(long userId, String prefix, boolean recursive) {
                     return s3Repo.findAllNamesByPrefix(props.getDefaultBucketName(),
                               paths.toTechnicalPath(userId, prefix), recursive);
+          }
+          private String validateAndNormalizeQuery(String query) {
+                    if (query == null || query.trim().isEmpty()) {
+                              throw new InvalidSearchQueryException("Search query cannot be null or empty");
+                    }
+                    return query.toLowerCase().trim();
           }
 }

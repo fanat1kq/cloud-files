@@ -29,6 +29,16 @@ public class SecurityConfig {
           @Bean
           public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                     http
+                              .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                              .csrf(AbstractHttpConfigurer::disable)
+                              .securityContext(securityContext -> securityContext
+                                        .securityContextRepository(securityContextRepository())
+                              )
+                              .sessionManagement(
+                                        sessionManagement -> sessionManagement
+                                                  .maximumSessions(1)
+                                                  .expiredUrl("/api/auth/sign-in")
+                              )
                               .authorizeHttpRequests(authorize -> authorize
                                         .requestMatchers("/api/auth/sign-up",
                                                   "/api/auth/sign-in",
@@ -37,20 +47,13 @@ public class SecurityConfig {
                                                   "/swagger-ui/**",
                                                   "/swagger-ui.html").permitAll()
                                         .anyRequest().authenticated())
-                              .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                              .csrf(AbstractHttpConfigurer::disable)
                               .formLogin(AbstractHttpConfigurer::disable)
                               .logout(logout -> logout
                                         .logoutUrl("/api/auth/sign-out")
-                                        .deleteCookies("SESSION")
+                                        .deleteCookies("SESSION", "JSESSIONID")
                                         .invalidateHttpSession(true)
                                         .clearAuthentication(true)
                                         .logoutSuccessHandler(logoutSuccessHandler()))
-                              .sessionManagement(
-                                        sessionManagement -> sessionManagement
-                                                  .maximumSessions(1)
-                                                  .expiredUrl("/api/auth/sign-in")
-                              )
                               .exceptionHandling(configurer -> configurer.authenticationEntryPoint(
                                         new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
                     return http.build();
@@ -62,7 +65,7 @@ public class SecurityConfig {
                     return (request, response, authentication) -> response.setStatus(HttpStatus.NO_CONTENT.value());
           }
 
-          @Bean //TODO
+          @Bean
           @ConditionalOnMissingBean
           public HttpSessionEventPublisher httpSessionEventPublisher() {
                     return new HttpSessionEventPublisher();
@@ -79,13 +82,6 @@ public class SecurityConfig {
                               config.setAllowCredentials(true);
                               return config;
                     };
-          }
-
-          @Bean //TODO
-          public AuthenticationManager authenticationManager(
-                    AuthenticationConfiguration authenticationConfiguration) throws Exception {
-
-                    return authenticationConfiguration.getAuthenticationManager();
           }
 
           @Bean
