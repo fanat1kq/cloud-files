@@ -23,14 +23,11 @@ import ru.example.cloudfiles.docs.storage.resource.GetResourceDocs;
 import ru.example.cloudfiles.docs.storage.resource.MoveResourceDocs;
 import ru.example.cloudfiles.docs.storage.resource.SearchResourceDocs;
 import ru.example.cloudfiles.docs.storage.resource.UploadResourceDocs;
+import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
 import ru.example.cloudfiles.service.S3UserService;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -46,11 +43,11 @@ public class ResourceController {
           @ResponseStatus(HttpStatus.OK)
           @GetResourceDocs
           public ResourceInfoResponseDTO getResource(
-                                                     @RequestParam
-                                                     @NotBlank(message = "Parameter \"path\" must not be blank")
-                                                     String path,
-                                                     @AuthenticationPrincipal
-                                                     CustomUserDetails userDetails) {
+                    @RequestParam
+                    @NotBlank(message = "Parameter \"path\" must not be blank")
+                    String path,
+                    @AuthenticationPrincipal
+                    CustomUserDetails userDetails) {
 
                     return s3UserService.getResource(userDetails.getId(), path);
           }
@@ -70,32 +67,17 @@ public class ResourceController {
           @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
           @ResponseStatus(HttpStatus.ACCEPTED)
           @DownloadResourceDocs
-          public ResponseEntity<StreamingResponseBody> downloadResource(@RequestParam
-                                                                        @NotBlank(message = "Parameter \"path\" must not be blank")
-                                                                        String path,
-                                                                        @AuthenticationPrincipal
-                                                                        CustomUserDetails userDetails) {
+          public ResponseEntity<StreamingResponseBody> downloadResource(
+                    @RequestParam @NotBlank String path,
+                    @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-                    StreamingResponseBody streamingResponseBody =
-                              s3UserService.download(userDetails.getId(), path);
-
-                    Path entirePath = Paths.get(path);
-                    String fileName;
-
-                    if (path.endsWith("/")) {
-                              fileName = entirePath.getFileName().toString().concat(".zip");
-                    } else {
-                              fileName = entirePath.getFileName().toString();
-                    }
-
-                    String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
-                              .replace("+", "%20");
+                    DownloadResult downloadResult =
+                              s3UserService.prepareDownload(userDetails.getId(), path);
 
                     return ResponseEntity.ok()
                               .header(HttpHeaders.CONTENT_DISPOSITION,
-                                        "attachment; filename*=UTF-8''%s".formatted(
-                                                  encodedFileName))
-                              .body(streamingResponseBody);
+                                        downloadResult.contentDisposition())
+                              .body(downloadResult.streamingBody());
           }
 
 

@@ -9,7 +9,7 @@ import ru.example.cloudfiles.dto.response.UserResponseDTO;
 import ru.example.cloudfiles.entity.User;
 import ru.example.cloudfiles.security.CustomUserDetails;
 
-@Mapper(componentModel = "spring")// unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
 
           UserResponseDTO toDto(CustomUserDetails userDetails);
@@ -18,6 +18,7 @@ public interface UserMapper {
           @Mapping(target = "password", ignore = true)
           User toEntity(UserRequestDTO dto);
 
+          @Mapping(target = "authorities", ignore = true)
           CustomUserDetails toCustomUserDetails(User user);
 
           default User toEntityWithPassword(UserRequestDTO dto, PasswordEncoder passwordEncoder) {

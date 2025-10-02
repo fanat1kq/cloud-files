@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.service.S3UserService;
 import ru.example.cloudfiles.service.impl.composition.DirectoryOperationsService;
@@ -44,8 +44,8 @@ public class S3UserServiceImpl implements S3UserService {
           }
 
           @Override
-          public StreamingResponseBody download(long userId, String path) {
-                    return fileOps.download(userId, path);
+          public DownloadResult prepareDownload(long userId, String path) {
+                    return fileOps.prepareDownload(userId, path);
           }
 
           @Override
