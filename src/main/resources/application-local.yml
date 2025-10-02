@@ -19,7 +19,11 @@ minio:
   bucket: ${MINIO_BUCKET}
 
 application:
-  default-bucket-name: user-files
+  s3:
+    buffer-size: 1024
+    user-directory-pattern: user-%d-files/
+    default-bucket-name: user-files
+
 server:
   servlet:
     session:
@@ -33,3 +37,4 @@ springdoc:
     csrf:
       enabled: false
     disable-swagger-default-url: true
+

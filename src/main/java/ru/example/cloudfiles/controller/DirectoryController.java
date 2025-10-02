@@ -1,7 +1,6 @@
 package ru.example.cloudfiles.controller;
 
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -28,13 +27,14 @@ import java.util.List;
 @RestController
 @RequestMapping("api/directory")
 @RequiredArgsConstructor
-@Validated //TODO
+@Validated
 public class DirectoryController {
 
           private final S3UserService s3UserService;
 
           @InitBinder
           public void initBinder(WebDataBinder binder) {
+
                     binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
           }
 
@@ -45,23 +45,20 @@ public class DirectoryController {
           public List<ResourceInfoResponseDTO> getDirectory(@RequestParam(name = "path")
                                                             String path,
                                                             @AuthenticationPrincipal
-                                                            CustomUserDetails userDetails)
-                    throws Exception {
+                                                            CustomUserDetails userDetails) {
 
-                    return s3UserService.getDirectoryContents(userDetails.getId(), path);
+                    return s3UserService.getDir(userDetails.getId(), path);
           }
 
           @PostMapping
           @ResponseStatus(HttpStatus.CREATED)
           @CreateDirectoryDocs
-          public ResourceInfoResponseDTO createDirectory(@Valid
-                                                         @RequestParam(name = "path")
+          public ResourceInfoResponseDTO createDirectory(@RequestParam(name = "path")
                                                          @NotBlank(message = "Parameter \"path\" must not be blank")
                                                          String path,
                                                          @AuthenticationPrincipal
-                                                         CustomUserDetails userDetails)
-                    throws Exception {
+                                                         CustomUserDetails userDetails) {
 
-                    return s3UserService.createDirectory(userDetails.getId(), path);
+                    return s3UserService.createDir(userDetails.getId(), path);
           }
 }

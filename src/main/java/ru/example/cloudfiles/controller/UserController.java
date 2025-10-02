@@ -2,7 +2,6 @@ package ru.example.cloudfiles.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +24,7 @@ import ru.example.cloudfiles.service.S3UserService;
 @RestController
 @RequestMapping(value = "/api")
 @RequiredArgsConstructor
-@Validated//TODO
+@Validated
 public class UserController {
 
           private final AuthService authService;
@@ -35,12 +34,12 @@ public class UserController {
           @PostMapping("/auth/sign-up")
           @ResponseStatus(HttpStatus.CREATED)
           @RegisterUserDocs
-          public UserResponseDTO signUp(@Valid @RequestBody UserRequestDTO request,
+          public UserResponseDTO signUp(@RequestBody UserRequestDTO request,
                                         HttpServletRequest httpServletRequest,
-                                        HttpServletResponse httpServletResponse) throws Exception {
+                                        HttpServletResponse httpServletResponse) {
 
                     var user = authService.signUp(request, httpServletRequest, httpServletResponse);
-                    s3UserService.createUserDirectory(user.getId());
+                    s3UserService.createUserDir(user.getId());
 
                     return new UserResponseDTO(user.getUsername());
           }
@@ -48,9 +47,8 @@ public class UserController {
           @GetMapping("/user/me")
           @ResponseStatus(HttpStatus.OK)
           @GetUserDocs
-          public UserResponseDTO getUser(
+          public UserResponseDTO getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-                    @AuthenticationPrincipal CustomUserDetails userDetails) {
                     return new UserResponseDTO(userDetails.getUsername());
           }
 

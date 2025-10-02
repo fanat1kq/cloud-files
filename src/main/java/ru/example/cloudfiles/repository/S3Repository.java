@@ -1,5 +1,6 @@
 package ru.example.cloudfiles.repository;
 
+
 import ru.example.cloudfiles.entity.Resource;
 
 import java.io.InputStream;
@@ -7,19 +8,15 @@ import java.util.List;
 
 public interface S3Repository {
 
-          void deleteBucket(String bucketName);
+    void deleteResource(String bucketName, String path);
 
-          boolean isBucketExists(String bucketName);
+    List<String> findAllNamesByPrefix(String bucket, String prefix, boolean recursive);
 
-          void deleteResource(String bucketName, String path);
+    Resource getResourceByPath(String bucket, String path);
 
-          List<String> findAllNamesByPrefix(String bucket, String prefix, boolean recursive);
+    void saveResource(String bucket, String path, InputStream dataStream);
 
-          Resource getResourceByPath(String bucket, String path);
+    void createDirectory(String bucketName, String path);
 
-          void saveResource(String bucket, String path, InputStream dataStream);
-
-          void createDirectory(String bucketName, String path);
-
-          boolean isObjectExists(String bucketName, String path);
+    boolean isObjectExists(String bucketName, String path);
 }

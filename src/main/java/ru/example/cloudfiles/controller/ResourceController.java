@@ -37,7 +37,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/resource")
-@Validated//TODO
+@Validated
 public class ResourceController {
 
           private final S3UserService s3UserService;
@@ -46,13 +46,12 @@ public class ResourceController {
           @GetMapping
           @ResponseStatus(HttpStatus.OK)
           @GetResourceDocs
-          public ResourceInfoResponseDTO getResource(@Valid
+          public ResourceInfoResponseDTO getResource(
                                                      @RequestParam(name = "path")
                                                      @NotBlank(message = "Parameter \"path\" must not be blank")
                                                      String path,
                                                      @AuthenticationPrincipal
-                                                     CustomUserDetails userDetails)
-                    throws Exception {
+                                                     CustomUserDetails userDetails) {
 
                     return s3UserService.getResource(userDetails.getId(), path);
           }
@@ -65,8 +64,7 @@ public class ResourceController {
                                      @RequestParam(name = "path")
                                      @NotBlank(message = "Parameter \"path\" must not be blank")
                                      String path,
-                                     @AuthenticationPrincipal CustomUserDetails userDetails)
-                    throws Exception {
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
 
                     s3UserService.deleteResource(userDetails.getId(), path);
           }
@@ -74,16 +72,14 @@ public class ResourceController {
           @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
           @ResponseStatus(HttpStatus.ACCEPTED)
           @DownloadResourceDocs
-          public ResponseEntity<StreamingResponseBody> downloadResource(@Valid
-                                                                        @RequestParam(name = "path")
+          public ResponseEntity<StreamingResponseBody> downloadResource(@RequestParam(name = "path")
                                                                         @NotBlank(message = "Parameter \"path\" must not be blank")
                                                                         String path,
                                                                         @AuthenticationPrincipal
-                                                                        CustomUserDetails userDetails)
-                    throws Exception {
+                                                                        CustomUserDetails userDetails) {
 
                     StreamingResponseBody streamingResponseBody =
-                              s3UserService.downloadResource(userDetails.getId(), path);
+                              s3UserService.download(userDetails.getId(), path);
 
                     Path entirePath = Paths.get(path);
                     String fileName;
@@ -108,16 +104,14 @@ public class ResourceController {
           @GetMapping("/move")
           @ResponseStatus(HttpStatus.OK)
           @MoveResourceDocs
-          public ResourceInfoResponseDTO move(@Valid
-                                              @RequestParam(name = "from")
+          public ResourceInfoResponseDTO move(@RequestParam(name = "from")
                                               @NotBlank(message = "Parameter \"from\" must not be blank")
                                               String from,
-                                              @Valid
                                               @RequestParam(name = "to")
                                               @NotBlank(message = "Parameter \"to\" must not be blank")
                                               String to,
                                               @AuthenticationPrincipal
-                                              CustomUserDetails userDetails) throws Exception {
+                                              CustomUserDetails userDetails) {
 
                     return s3UserService.moveResource(userDetails.getId(), from, to);
           }
@@ -126,15 +120,14 @@ public class ResourceController {
           @GetMapping("/search")
           @ResponseStatus(HttpStatus.OK)
           @SearchResourceDocs
-          public List<ResourceInfoResponseDTO> search(@Valid
-                                                      @RequestParam(name = "query")
+          public List<ResourceInfoResponseDTO> search(@RequestParam(name = "query")
                                                       @NotBlank(message = "Parameter \"query\" must not be blank")
                                                       String query,
                                                       @AuthenticationPrincipal
                                                       CustomUserDetails userDetails)
                     throws Exception {
 
-                    return s3UserService.searchResource(userDetails.getId(), query);
+                    return s3UserService.search(userDetails.getId(), query);
           }
 
 
@@ -149,6 +142,6 @@ public class ResourceController {
                     CustomUserDetails userDetails)
                     throws Exception {
 
-                    return s3UserService.uploadFiles(userDetails.getId(), path, files);
+                    return s3UserService.upload(userDetails.getId(), path, files);
           }
 }

@@ -1,4 +1,4 @@
 spring:
   config:
     import:
-      - optional:file:.env.local.${spring.profiles.active}[.properties]
+      - optional:file:.env.${spring.profiles.active}[.properties]
