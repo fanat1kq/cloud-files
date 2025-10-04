@@ -6,13 +6,13 @@ import jakarta.validation.constraints.Size;
 
 public record UserRequestDTO(
 
-          @NotNull
-          @NotEmpty
-          @Size(min = 5, max = 20)
-          String username,
+        @NotNull
+        @NotEmpty
+        @Size(min = 5, max = 20)
+        String username,
 
-          @NotNull
-          @NotEmpty
-          @Size(min = 8)
-          String password) {
+        @NotNull
+        @NotEmpty
+        @Size(min = 8)
+        String password) {
 }

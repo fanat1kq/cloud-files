@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 @Component
 @Slf4j
 public class PathValidator {
-          private static final Pattern FORBIDDEN_SYMBOLS = Pattern.compile(".*[\\\\/?*:<>\"|].*");
+    private static final Pattern FORBIDDEN_SYMBOLS = Pattern.compile(".*[\\\\/?*:<>\"|].*");
 
-          public void validatePath(String path) {
+    public void validatePath(String path) {
 //                    if (path == null || path.isBlank()) {
 //                              throw new EmptyPathException();
 //                    }
@@ -22,5 +22,5 @@ public class PathValidator {
 //                    if (path.contains("//")) {
 //                              throw new EmptyPathException();
 //                    }
-          }
+    }
 }

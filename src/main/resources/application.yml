@@ -1,4 +1,27 @@
-spring:
-  config:
-    import:
-      - optional:file:.env.${spring.profiles.active}[.properties]
+#spring:
+#  config:
+#    import:
+#      - optional:file:.env.${spring.profiles.active}[.properties]
+
+
+#spring:
+#  config:
+#    import:
+#      - optional:file:.env
+#server:
+#  ssl:
+#    enabled: false
+#  tomcat:
+#    remoteip:
+#      remote-ip-header: x-forwarded-for
+#      protocol-header: x-forwarded-proto
+#security:
+#  require-ssl: false
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.web.cors: DEBUG
+#    org.springframework.core.env: DEBUG
+#    org.springframework.boot.context.config: DEBUG
+

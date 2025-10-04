@@ -3,23 +3,23 @@ package ru.example.cloudfiles.dto;
 import java.time.LocalDateTime;
 
 public record ErrorResponse(
-          String message,
-          LocalDateTime timestamp
+        String message,
+        LocalDateTime timestamp
 ) {
-          public ErrorResponse {
+    public ErrorResponse {
 
-                    if (timestamp == null) {
-                              timestamp = LocalDateTime.now();
-                    }
-          }
+        if (timestamp == null) {
+            timestamp = LocalDateTime.now();
+        }
+    }
 
-          public ErrorResponse(String message) {
+    public ErrorResponse(String message) {
 
-                    this(message, LocalDateTime.now());
-          }
+        this(message, LocalDateTime.now());
+    }
 
-          public ErrorResponse() {
+    public ErrorResponse() {
 
-                    this(null, LocalDateTime.now());
-          }
+        this(null, LocalDateTime.now());
+    }
 }

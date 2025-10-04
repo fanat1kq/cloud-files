@@ -12,18 +12,18 @@ import ru.example.cloudfiles.security.CustomUserDetails;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
 
-          UserResponseDTO toDto(CustomUserDetails userDetails);
+    UserResponseDTO toDto(CustomUserDetails userDetails);
 
-          @Mapping(target = "id", ignore = true)
-          @Mapping(target = "password", ignore = true)
-          User toEntity(UserRequestDTO dto);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    User toEntity(UserRequestDTO dto);
 
-          @Mapping(target = "authorities", ignore = true)
-          CustomUserDetails toCustomUserDetails(User user);
+    @Mapping(target = "authorities", ignore = true)
+    CustomUserDetails toCustomUserDetails(User user);
 
-          default User toEntityWithPassword(UserRequestDTO dto, PasswordEncoder passwordEncoder) {
-                    User user = toEntity(dto);
-                    user.setPassword(passwordEncoder.encode(dto.password()));
-                    return user;
-          }
+    default User toEntityWithPassword(UserRequestDTO dto, PasswordEncoder passwordEncoder) {
+        User user = toEntity(dto);
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        return user;
+    }
 }

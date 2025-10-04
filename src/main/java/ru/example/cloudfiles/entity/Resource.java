@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public record Resource(String path, InputStream dataStream, long size) {
 
-          public Resource {
-                    Objects.requireNonNull(dataStream);
-          }
+    public Resource {
+        Objects.requireNonNull(dataStream);
+    }
 }

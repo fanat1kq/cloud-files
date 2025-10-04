@@ -5,10 +5,10 @@ import ru.example.cloudfiles.dto.ResourceType;
 
 @Builder
 public record ResourceInfoResponseDTO(
-          String path,
-          String name,
-          long size,
-          ResourceType type
+        String path,
+        String name,
+        long size,
+        ResourceType type
 ) {
 }
 

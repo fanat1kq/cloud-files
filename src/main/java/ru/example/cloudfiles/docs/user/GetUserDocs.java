@@ -9,11 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import ru.example.cloudfiles.dto.ErrorResponse;
 import ru.example.cloudfiles.security.CustomUserDetails;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Operation(summary = "Get user details by ID",
         requestBody = @RequestBody(

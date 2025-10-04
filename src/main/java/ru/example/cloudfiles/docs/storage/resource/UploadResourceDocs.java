@@ -14,8 +14,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Operation(summary = "Upload Resource",description = "Upload Resource to application",
-tags = {"Storage","Resource"})
+@Operation(summary = "Upload Resource", description = "Upload Resource to application",
+        tags = {"Storage", "Resource"})
 @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "Invalid path format",
                 content = @Content(mediaType = "application/json",

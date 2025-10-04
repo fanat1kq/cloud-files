@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
 @Operation(
         summary = "Get Resource Info",
         description = "Retrieve information about a resource by its full path. " +
-                      "Path must be URL-encoded. Folder paths should end with '/'. " +
-                      "This distinction allows differentiating files and folders with the same name in one directory.",
+                "Path must be URL-encoded. Folder paths should end with '/'. " +
+                "This distinction allows differentiating files and folders with the same name in one directory.",
         tags = {"Storage", "Resource"}
 )
 @ApiResponses(value = {

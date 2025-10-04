@@ -2,9 +2,12 @@ package ru.example.cloudfiles.repository.impl;
 
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
+import io.minio.RemoveObjectsArgs;
+import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import ru.example.cloudfiles.entity.Resource;
 import ru.example.cloudfiles.exception.S3RepositoryException;
 import ru.example.cloudfiles.repository.S3Repository;
@@ -36,7 +39,7 @@ public class MinioRepository implements S3Repository {
     public void deleteResource(String bucketName, String path) {
         pathValidator.validatePath(path);
 
-        if (path.endsWith("/")) {
+        if (StringUtils.endsWithIgnoreCase(path, "/")) {
             deleteDirectory(bucketName, path);
         } else {
             deleteSingleObject(bucketName, path);
@@ -44,23 +47,16 @@ public class MinioRepository implements S3Repository {
     }
 
     private void deleteDirectory(String bucketName, String path) {
+
         try {
             List<String> objectNames = directoryRepository.findAllNamesByPrefix(bucketName, path, false);
 
-            if (!objectNames.isEmpty()) {
-                for (String objectName : objectNames) {
-                    try {
-                        minioClient.removeObject(
-                                  RemoveObjectArgs.builder()
-                                            .bucket(bucketName)
-                                            .object(objectName)
-                                            .build()
-                        );
-                    } catch (Exception e) {
-                        throw new S3RepositoryException("Failed to delete object: " + objectName, e);
-                    }
-                }
-            }
+            minioClient.removeObjects(
+                    RemoveObjectsArgs.builder()
+                            .bucket(bucketName)
+                            .objects(objectNames.stream().map(DeleteObject::new).toList())
+                            .build());
+
         } catch (Exception e) {
             throw new S3RepositoryException("Failed to delete directory: " + path, e);
         }
@@ -69,9 +65,9 @@ public class MinioRepository implements S3Repository {
     private void deleteSingleObject(String bucketName, String path) {
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
-                      .bucket(bucketName)
-                      .object(path)
-                      .build());
+                    .bucket(bucketName)
+                    .object(path)
+                    .build());
         } catch (Exception e) {
             throw new S3RepositoryException("Failed to delete object: " + path, e);
         }

@@ -18,64 +18,64 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class ObjectRepository {
-          private final MinioClient minioClient;
-          private final PathValidator pathValidator;
+    private final MinioClient minioClient;
+    private final PathValidator pathValidator;
 
-          public Resource getResourceByPath(String bucket, String path) {
-                    pathValidator.validatePath(path);
+    public Resource getResourceByPath(String bucket, String path) {
+        pathValidator.validatePath(path);
 
-                    try {
-                              var objectStream = minioClient.getObject(GetObjectArgs.builder()
-                                        .bucket(bucket)
-                                        .object(path)
-                                        .build());
+        try {
+            var objectStream = minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(path)
+                    .build());
 
-                              var objectStat = minioClient.statObject(StatObjectArgs.builder()
-                                        .bucket(bucket)
-                                        .object(path)
-                                        .build());
+            var objectStat = minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(path)
+                    .build());
 
-                              return new Resource(path, objectStream, objectStat.size());
-                    } catch (ErrorResponseException e) {
-                              if ("NoSuchKey".equals(e.errorResponse().code())) {
-                                        throw new ResourceNotFoundException(path);
-                              }
-                              throw new S3RepositoryException("Failed to find resource by path", e);
-                    } catch (Exception e) {
-                              throw new S3RepositoryException("Repository exception", e);
-                    }
-          }
+            return new Resource(path, objectStream, objectStat.size());
+        } catch (ErrorResponseException e) {
+            if ("NoSuchKey".equals(e.errorResponse().code())) {
+                throw new ResourceNotFoundException(path);
+            }
+            throw new S3RepositoryException("Failed to find resource by path", e);
+        } catch (Exception e) {
+            throw new S3RepositoryException("Repository exception for path", e);
+        }
+    }
 
-          public void saveResource(String bucket, String path, InputStream dataStream) {
-                    pathValidator.validatePath(path);
+    public void saveResource(String bucket, String path, InputStream dataStream) {
+        pathValidator.validatePath(path);
 
-                    try {
-                              minioClient.putObject(PutObjectArgs.builder()
-                                        .bucket(bucket)
-                                        .object(path)
-                                        .stream(dataStream, -1, 10485760)
-                                        .build());
-                    } catch (Exception e) {
-                              throw new S3RepositoryException("Failed to save resource", e);
-                    }
-          }
+        try {
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(path)
+                    .stream(dataStream, -1, 10485760)
+                    .build());
+        } catch (Exception e) {
+            throw new S3RepositoryException("Failed to save resource", e);
+        }
+    }
 
-          public boolean isObjectExists(String bucketName, String path) {
-                    pathValidator.validatePath(path);
+    public boolean isObjectExists(String bucketName, String path) {
+        pathValidator.validatePath(path);
 
-                    try {
-                              minioClient.statObject(StatObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(path)
-                                        .build());
-                              return true;
-                    } catch (ErrorResponseException e) {
-                              if ("NoSuchKey".equals(e.errorResponse().code())) {
-                                        return false;
-                              }
-                              throw new S3RepositoryException("Repository exception", e);
-                    } catch (Exception e) {
-                              throw new S3RepositoryException("Object doesn`t exist", e);
-                    }
-          }
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(path)
+                    .build());
+            return true;
+        } catch (ErrorResponseException e) {
+            if ("NoSuchKey".equals(e.errorResponse().code())) {
+                return false;
+            }
+            throw new S3RepositoryException("Repository exception", e);
+        } catch (Exception e) {
+            throw new S3RepositoryException("Object doesn`t exist", e);
+        }
+    }
 }

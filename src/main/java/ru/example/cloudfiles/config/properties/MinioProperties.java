@@ -12,15 +12,21 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "minio")
 public class MinioProperties {
 
-          @NotBlank
-          private String url;
+    @NotBlank
+    private String url;
 
-          @NotBlank
-          private String accessKey;
+    @NotBlank
+    private String accessKey;
 
-          @NotBlank
-          private String secretKey;
+    @NotBlank
+    private String secretKey;
 
-          @NotBlank
-          private String bucket;
+    @NotBlank
+    private String bucket;
+
+    @NotBlank
+    private String userDirectoryPattern = "user-%d-files/";
+
+    @NotBlank
+    private int bufferSize = 1024;
 }

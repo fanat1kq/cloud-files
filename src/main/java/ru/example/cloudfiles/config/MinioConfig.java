@@ -12,23 +12,23 @@ import ru.example.cloudfiles.config.properties.MinioProperties;
 @RequiredArgsConstructor
 public class MinioConfig {
 
-          private final MinioProperties minioProperties;
+    private final MinioProperties minioProperties;
 
-          @Bean
-          public MinioClient minioClient() throws Exception {
-                    MinioClient minio = MinioClient.builder()
-                              .endpoint(minioProperties.getUrl())
-                              .credentials(minioProperties.getAccessKey(),
-                                        minioProperties.getSecretKey())
-                              .build();
-                    boolean bucketExists = minio.bucketExists(BucketExistsArgs.builder()
-                              .bucket(minioProperties.getBucket())
-                              .build());
-                    if (!bucketExists) {
-                              minio.makeBucket(MakeBucketArgs.builder()
-                                        .bucket(minioProperties.getBucket())
-                                        .build());
-                    }
-                    return minio;
-          }
+    @Bean
+    public MinioClient minioClient() throws Exception {
+        MinioClient minio = MinioClient.builder()
+                .endpoint(minioProperties.getUrl())
+                .credentials(minioProperties.getAccessKey(),
+                        minioProperties.getSecretKey())
+                .build();
+        boolean bucketExists = minio.bucketExists(BucketExistsArgs.builder()
+                .bucket(minioProperties.getBucket())
+                .build());
+        if (!bucketExists) {
+            minio.makeBucket(MakeBucketArgs.builder()
+                    .bucket(minioProperties.getBucket())
+                    .build());
+        }
+        return minio;
+    }
 }

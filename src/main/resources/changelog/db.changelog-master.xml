@@ -6,10 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="/changelog/v.1.0.0/tables/v1.0.0__create-users-table.xml"/>
-    <!--    <include file="/changelog/v.1.0.0/tables/v1.0.0__create-projects-table.xml"/>-->
-    <!--    <include file="/changelog/v.1.0.0/tables/v1.0.0__create-tasks-table.xml"/>-->
 
     <includeAll path="v.1.0.0/data/" relativeToChangelogFile="true"/>
-
 
 </databaseChangeLog>

@@ -1,0 +1,60 @@
+spring:
+  config:
+    import: optional:file:.env.docker[.properties]
+  datasource:
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
+    default-schema: ${DEFAULT_SCHEMA}
+    liquibase-schema: ${LIQUIBASE_SCHEMA}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  #      database: 0  # сессии
+  #    cache:
+  #      type: redis
+  #      redis:
+  #        database: 1
+  session:
+    store-type: redis
+    redis:
+      namespace: myapp:session
+      flush-mode: on_save
+      save-mode: on_set_attribute
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+  buffer-size: ${MINIO_BUFFER_SIZE:1024}
+  user-directory-pattern: ${MINIO_USER_DIRECTORY_PATTERN}
+
+server:
+  servlet:
+    session:
+      timeout: 1800
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
+    disable-swagger-default-url: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: env,configprops
+
+custom:
+  test: "local-docker-profile-is-working"

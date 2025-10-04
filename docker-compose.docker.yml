@@ -1,0 +1,68 @@
+services:
+
+  redis:
+    image: redis:latest
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
+    env_file: .env.docker
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - file-storage-network
+
+  minio:
+    image: minio/minio
+    env_file: .env.docker
+    command: server /data --console-address ":9001"
+    networks:
+      - file-storage-network
+
+  frontend:
+    build:
+      context: ./frontend/roadmap-cloud-storage-frontend-master/
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"
+    networks:
+      - file-storage-network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: build/libs/cloud-files-0.0.1-SNAPSHOT.jar
+    ports:
+      - "8080:8080"
+    env_file: .env.docker
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    networks:
+      - file-storage-network
+
+  postgres:
+    image: postgres:17
+    env_file: .env.docker
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - file-storage-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  minio-data:
+  redis-data:
+  postgres-data:
+
+networks:
+  file-storage-network:
+    driver: bridge

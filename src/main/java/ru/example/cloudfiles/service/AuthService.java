@@ -25,53 +25,53 @@ import ru.example.cloudfiles.security.CustomUserDetails;
 @Transactional
 public class AuthService {
 
-          private final UserRepository userRepository;
-          private final PasswordEncoder passwordEncoder;
-          private final UserDetailsService userDetailsService;
-          private final SecurityContextRepository securityContextRepository;
-          private final UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final SecurityContextRepository securityContextRepository;
+    private final UserMapper userMapper;
 
-          public User signUp(UserRequestDTO request,
-                             HttpServletRequest httpServletRequest,
-                             HttpServletResponse httpServletResponse) {
+    public User signUp(UserRequestDTO request,
+                       HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse) {
 
-                    User user = userMapper.toEntityWithPassword(request, passwordEncoder);
-                    User savedUser = userRepository.save(user);
+        User user = userMapper.toEntityWithPassword(request, passwordEncoder);
+        User savedUser = userRepository.save(user);
 
-                    authenticateUser(savedUser, httpServletRequest, httpServletResponse);
-                    return savedUser;
-          }
+        authenticateUser(savedUser, httpServletRequest, httpServletResponse);
+        return savedUser;
+    }
 
-          @Transactional(readOnly = true)
-          public UserResponseDTO signIn(UserRequestDTO request,
-                                        HttpServletRequest httpServletRequest,
-                                        HttpServletResponse httpServletResponse) {
+    @Transactional(readOnly = true)
+    public UserResponseDTO signIn(UserRequestDTO request,
+                                  HttpServletRequest httpServletRequest,
+                                  HttpServletResponse httpServletResponse) {
 
-                    CustomUserDetails userDetails = (CustomUserDetails)
-                              userDetailsService.loadUserByUsername(request.username());
+        CustomUserDetails userDetails = (CustomUserDetails)
+                userDetailsService.loadUserByUsername(request.username());
 
-                    if (!passwordEncoder.matches(request.password(), userDetails.getPassword())) {
-                              throw new BadCredentialsException("Invalid password for user: " + request.username());
-                    }
+        if (!passwordEncoder.matches(request.password(), userDetails.getPassword())) {
+            throw new BadCredentialsException("Invalid password for user: " + request.username());
+        }
 
-                    authenticateUser(userDetails, httpServletRequest, httpServletResponse);
-                    return userMapper.toDto(userDetails);
-          }
+        authenticateUser(userDetails, httpServletRequest, httpServletResponse);
+        return userMapper.toDto(userDetails);
+    }
 
-          public void authenticateUser(User user,
-                                       HttpServletRequest httpRequest,
-                                       HttpServletResponse httpResponse) {
-                    CustomUserDetails userDetails = userMapper.toCustomUserDetails(user);
-                    authenticateUser(userDetails, httpRequest, httpResponse);
-          }
+    public void authenticateUser(User user,
+                                 HttpServletRequest httpRequest,
+                                 HttpServletResponse httpResponse) {
+        CustomUserDetails userDetails = userMapper.toCustomUserDetails(user);
+        authenticateUser(userDetails, httpRequest, httpResponse);
+    }
 
-          private void authenticateUser(CustomUserDetails userDetails,
-                                        HttpServletRequest httpRequest,
-                                        HttpServletResponse httpResponse) {
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(
-                              userDetails, null, userDetails.getAuthorities());
+    private void authenticateUser(CustomUserDetails userDetails,
+                                  HttpServletRequest httpRequest,
+                                  HttpServletResponse httpResponse) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
 
-                    SecurityContext context = new SecurityContextImpl(authentication);
-                    securityContextRepository.saveContext(context, httpRequest, httpResponse);
-          }
+        SecurityContext context = new SecurityContextImpl(authentication);
+        securityContextRepository.saveContext(context, httpRequest, httpResponse);
+    }
 }
