@@ -2,8 +2,6 @@ package ru.example.cloudfiles.repository.impl;
 
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
-import io.minio.RemoveObjectsArgs;
-import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -14,7 +12,7 @@ import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceDel
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.repository.impl.composition.DirectoryRepository;
 import ru.example.cloudfiles.repository.impl.composition.ObjectRepository;
-import ru.example.cloudfiles.repository.impl.composition.PathValidator;
+import ru.example.cloudfiles.validation.PathValidator;
 
 import java.io.InputStream;
 import java.util.List;
@@ -52,12 +50,19 @@ public class MinioRepository implements S3Repository {
         try {
             List<String> objectNames = directoryRepository.findAllNamesByPrefix(bucketName, path, false);
 
-            minioClient.removeObjects(
-                    RemoveObjectsArgs.builder()
-                            .bucket(bucketName)
-                            .objects(objectNames.stream().map(DeleteObject::new).toList())
-                            .build());
-
+            if (!objectNames.isEmpty()) {
+                for (String objectName : objectNames) {
+                    try {
+                        minioClient.removeObject(
+                                RemoveObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object(objectName)
+                                        .build());
+                    } catch (Exception e) {
+                        throw new ResourceDeletionException(objectName, e);
+                    }
+                }
+            }
         } catch (Exception e) {
             throw new DirectoryDeletionException(path, e);
         }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 import ru.example.cloudfiles.service.impl.composition.DirectoryOperationsService;
 import ru.example.cloudfiles.service.impl.composition.SearchService;
 import ru.example.cloudfiles.service.impl.composition.UploadService;
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class S3UserServiceImpl implements S3UserService {
+public class S3ServiceImpl implements S3Service {
 
     private final FileOperationsService fileOps;
 
@@ -50,17 +50,19 @@ public class S3UserServiceImpl implements S3UserService {
 
     @Override
     public ResourceInfoResponseDTO moveResource(long userId, String oldPath, String newPath) {
+
         return fileOps.moveResource(userId, oldPath, newPath);
     }
 
     @Override
     public List<ResourceInfoResponseDTO> search(long userId, String query) {
+
         return searchService.search(userId, query);
     }
 
     @Override
-    public List<ResourceInfoResponseDTO> upload(long userId, String uploadPath,
-                                                MultipartFile[] files) {
+    public List<ResourceInfoResponseDTO> upload(long userId, String uploadPath, MultipartFile[] files) {
+
         return uploadService.upload(userId, uploadPath, files);
     }
 

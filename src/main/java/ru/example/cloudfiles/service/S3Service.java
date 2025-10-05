@@ -7,7 +7,7 @@ import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 
 import java.util.List;
 
-public interface S3UserService {
+public interface S3Service {
 
     ResourceInfoResponseDTO getResource(long userId, String path);
 

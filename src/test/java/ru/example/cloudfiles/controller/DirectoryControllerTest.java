@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.cloudfiles.dto.ResourceType;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -38,7 +39,7 @@ class DirectoryControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private S3UserService s3UserService;
+    private S3Service s3Service;
 
     private PodamFactory factory;
 
@@ -77,7 +78,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.FILE)
                 .build();
 
-        when(s3UserService.getDir(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
+        when(s3Service.getDir(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
@@ -106,7 +107,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.DIRECTORY)
                 .build();
 
-        when(s3UserService.createDir(eq(userId), eq(path))).thenReturn(created);
+        when(s3Service.createDir(eq(userId), eq(path))).thenReturn(created);
 
         mockMvc.perform(post("/api/directory")
                         .param("path", path)
@@ -154,7 +155,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.FILE)
                 .build();
 
-        when(s3UserService.getDir(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
+        when(s3Service.getDir(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
@@ -183,7 +184,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.DIRECTORY)
                 .build();
 
-        when(s3UserService.createDir(eq(userId), eq(path))).thenReturn(created);
+        when(s3Service.createDir(eq(userId), eq(path))).thenReturn(created);
 
         mockMvc.perform(post("/api/directory")
                         .param("path", path)
@@ -197,7 +198,7 @@ class DirectoryControllerTest {
                 .andExpect(jsonPath("$.type").value("DIRECTORY"));
     }
 
-    @org.springframework.boot.test.context.TestConfiguration
+    @TestConfiguration
     static class TestAuthPrincipalResolver implements org.springframework.web.servlet.config.annotation.WebMvcConfigurer {
         @Override
         public void addArgumentResolvers(java.util.List<org.springframework.web.method.support.HandlerMethodArgumentResolver> resolvers) {

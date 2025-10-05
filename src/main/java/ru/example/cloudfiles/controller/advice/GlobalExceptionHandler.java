@@ -72,8 +72,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            BadCredentialsException.class,  // ← Добавляем Spring Security исключение
-            UserNotFoundException.class     // ← Ваше кастомное
+            BadCredentialsException.class,
+            UserNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleAuthenticationErrors(RuntimeException ex) {
         log.warn("Authentication failed: {}", ex.getMessage());

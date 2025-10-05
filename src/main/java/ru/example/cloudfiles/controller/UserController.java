@@ -13,7 +13,7 @@ import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.dto.response.UserResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
 import ru.example.cloudfiles.service.AuthService;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 
 
 @RestController
@@ -24,7 +24,7 @@ public class UserController {
 
     private final AuthService authService;
 
-    private final S3UserService s3UserService;
+    private final S3Service s3Service;
 
     @PostMapping("/auth/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +34,7 @@ public class UserController {
                                   HttpServletResponse httpServletResponse) {
 
         var user = authService.signUp(request, httpServletRequest, httpServletResponse);
-        s3UserService.createUserDir(user.getId());
+        s3Service.createUserDir(user.getId());
 
         return new UserResponseDTO(user.getUsername());
     }

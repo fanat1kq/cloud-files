@@ -58,7 +58,7 @@ public class FileDownloadService {
             try (var is = s3Repo.getResourceByPath(props.getBucket(), resourceName).dataStream()) {
                 is.transferTo(os);
             } catch (IOException e) {
-                throw new ResourceNotFoundException("Failed to read file: " + resourceName);
+                throw new ResourceNotFoundException(resourceName);
             }
         };
     }
@@ -72,17 +72,17 @@ public class FileDownloadService {
         };
     }
 
-    private void addToZip(long userId, String resourceName, ZipOutputStream zos) {
+    private void addToZip(long userId, String resourceName, ZipOutputStream zipOutputStream) {
 
         try {
             var resource = s3Repo.getResourceByPath(props.getBucket(), resourceName);
-            zos.putNextEntry(new ZipEntry(paths.toUserPath(userId, resource.path())));
+            zipOutputStream.putNextEntry(new ZipEntry(paths.toUserPath(userId, resource.path())));
             if (!paths.isDirectory(resource.path())) {
                 try (var is = resource.dataStream()) {
-                    is.transferTo(zos);
+                    is.transferTo(zipOutputStream);
                 }
             }
-            zos.closeEntry();
+            zipOutputStream.closeEntry();
         } catch (IOException e) {
             throw new ZipCreationException(resourceName, e);
         }

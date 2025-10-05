@@ -12,6 +12,7 @@ import ru.example.cloudfiles.entity.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.S3RepositoryException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSaveException;
+import ru.example.cloudfiles.validation.PathValidator;
 
 import java.io.InputStream;
 

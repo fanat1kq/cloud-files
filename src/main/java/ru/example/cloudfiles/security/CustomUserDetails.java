@@ -2,6 +2,7 @@ package ru.example.cloudfiles.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import java.util.Collections;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomUserDetails implements UserDetails {
 
@@ -24,10 +26,6 @@ public class CustomUserDetails implements UserDetails {
     private String username;
 
     private String password;
-
-
-    public CustomUserDetails() {
-    }
 
     public CustomUserDetails(User user) {
         this.id = user.getId();

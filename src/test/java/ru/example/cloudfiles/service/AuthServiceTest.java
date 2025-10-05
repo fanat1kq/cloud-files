@@ -108,10 +108,10 @@ class AuthServiceTest {
     }
 
     private CustomUserDetails customUser(long id, String username, String password) {
-        CustomUserDetails cud = new CustomUserDetails();
-        cud.setId(id);
-        cud.setUsername(username);
-        cud.setPassword(password);
-        return cud;
+        CustomUserDetails user = new CustomUserDetails();
+        user.setId(id);
+        user.setUsername(username);
+        user.setPassword(password);
+        return user;
     }
 }

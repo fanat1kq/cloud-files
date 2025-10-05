@@ -11,7 +11,7 @@ import ru.example.cloudfiles.docs.storage.directory.CreateDirectoryDocs;
 import ru.example.cloudfiles.docs.storage.directory.GetDirectoriesDocs;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 public class DirectoryController {
 
-    private final S3UserService s3UserService;
+    private final S3Service s3Service;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -32,7 +32,7 @@ public class DirectoryController {
                                                       @AuthenticationPrincipal
                                                       CustomUserDetails userDetails) {
 
-        return s3UserService.getDir(userDetails.getId(), path);
+        return s3Service.getDir(userDetails.getId(), path);
     }
 
     @PostMapping
@@ -44,6 +44,6 @@ public class DirectoryController {
                                                    @AuthenticationPrincipal
                                                    CustomUserDetails userDetails) {
 
-        return s3UserService.createDir(userDetails.getId(), path);
+        return s3Service.createDir(userDetails.getId(), path);
     }
 }

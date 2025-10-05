@@ -12,6 +12,7 @@ import ru.example.cloudfiles.service.impl.PathManager;
 @RequiredArgsConstructor
 @Slf4j
 public class FileDeleteService {
+
     private final S3Repository s3Repo;
     private final FileQueryService fileQueryService;
     private final PathManager paths;

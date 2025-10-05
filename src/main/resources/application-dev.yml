@@ -50,4 +50,3 @@ springdoc:
     csrf:
       enabled: false
     disable-swagger-default-url: true
-

@@ -12,11 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
-import ru.example.cloudfiles.dto.response.UserResponseDTO;
 import ru.example.cloudfiles.entity.User;
-import ru.example.cloudfiles.security.CustomUserDetails;
 import ru.example.cloudfiles.service.AuthService;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -70,7 +68,7 @@ class UserControllerTest {
     private AuthService authService;
 
     @MockBean
-    private S3UserService s3UserService;
+    private S3Service s3Service;
 
     @Test
     @DisplayName("POST /api/auth/sign-up creates user, creates user dir, returns 201 and username")
@@ -90,7 +88,7 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("johnny"));
 
-        verify(s3UserService).createUserDir(99L);
+        verify(s3Service).createUserDir(99L);
     }
 
     @Test

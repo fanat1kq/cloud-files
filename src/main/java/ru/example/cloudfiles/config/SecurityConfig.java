@@ -1,6 +1,5 @@
 package ru.example.cloudfiles.config;
 
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,9 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .requiresChannel(channel -> channel.anyRequest().requiresInsecure())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                              .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityContext(securityContext -> securityContext
                         .securityContextRepository(securityContextRepository())
@@ -109,10 +106,5 @@ public class SecurityConfig {
     @Bean
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
-    }
-
-    @Bean
-    public TomcatServletWebServerFactory servletContainer() {
-        return new TomcatServletWebServerFactory();
     }
 }

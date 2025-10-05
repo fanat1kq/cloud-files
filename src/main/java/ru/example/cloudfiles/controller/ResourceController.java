@@ -15,7 +15,7 @@ import ru.example.cloudfiles.docs.storage.resource.*;
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 @Validated
 public class ResourceController {
 
-    private final S3UserService s3UserService;
+    private final S3Service s3Service;
 
 
     @GetMapping
@@ -38,7 +38,7 @@ public class ResourceController {
             @AuthenticationPrincipal
             CustomUserDetails userDetails) {
 
-        return s3UserService.getResource(userDetails.getId(), path);
+        return s3Service.getResource(userDetails.getId(), path);
     }
 
 
@@ -50,7 +50,7 @@ public class ResourceController {
                                String path,
                                @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        s3UserService.deleteResource(userDetails.getId(), path);
+        s3Service.deleteResource(userDetails.getId(), path);
     }
 
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -61,7 +61,7 @@ public class ResourceController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         DownloadResult downloadResult =
-                s3UserService.prepareDownload(userDetails.getId(), path);
+                s3Service.prepareDownload(userDetails.getId(), path);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -82,7 +82,7 @@ public class ResourceController {
                                         @AuthenticationPrincipal
                                         CustomUserDetails userDetails) {
 
-        return s3UserService.moveResource(userDetails.getId(), from, to);
+        return s3Service.moveResource(userDetails.getId(), from, to);
     }
 
 
@@ -95,7 +95,7 @@ public class ResourceController {
                                                 @AuthenticationPrincipal
                                                 CustomUserDetails userDetails) {
 
-        return s3UserService.search(userDetails.getId(), query);
+        return s3Service.search(userDetails.getId(), query);
     }
 
 
@@ -109,6 +109,6 @@ public class ResourceController {
             @AuthenticationPrincipal
             CustomUserDetails userDetails) {
 
-        return s3UserService.upload(userDetails.getId(), path, files);
+        return s3Service.upload(userDetails.getId(), path, files);
     }
 }

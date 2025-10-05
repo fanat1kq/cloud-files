@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.ResourceType;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.service.S3UserService;
+import ru.example.cloudfiles.service.S3Service;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -42,7 +42,7 @@ class ResourceControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
-    private S3UserService s3UserService;
+    private S3Service s3Service;
     private PodamFactory factory;
 
     @BeforeEach
@@ -62,7 +62,7 @@ class ResourceControllerTest {
                 .size(10L)
                 .type(ResourceType.FILE)
                 .build();
-        when(s3UserService.getResource(userId, path)).thenReturn(info);
+        when(s3Service.getResource(userId, path)).thenReturn(info);
 
         mockMvc.perform(get("/api/resource")
                         .param("path", path)
@@ -79,7 +79,7 @@ class ResourceControllerTest {
     void deleteResource_noContent() throws Exception {
         long userId = 2L;
         String path = "/to-remove";
-        doNothing().when(s3UserService).deleteResource(userId, path);
+        doNothing().when(s3Service).deleteResource(userId, path);
 
         mockMvc.perform(delete("/api/resource")
                         .param("path", path)
@@ -95,7 +95,7 @@ class ResourceControllerTest {
         long userId = 3L;
         String path = "/docs/a.pdf";
         StreamingResponseBody body = outputStream -> outputStream.write("bytes".getBytes(StandardCharsets.UTF_8));
-        when(s3UserService.prepareDownload(userId, path)).thenReturn(new DownloadResult(body, "attachment; filename=a.pdf"));
+        when(s3Service.prepareDownload(userId, path)).thenReturn(new DownloadResult(body, "attachment; filename=a.pdf"));
 
         mockMvc.perform(get("/api/resource/download")
                         .param("path", path)
@@ -118,7 +118,7 @@ class ResourceControllerTest {
                 .size(0L)
                 .type(ResourceType.DIRECTORY)
                 .build();
-        when(s3UserService.moveResource(userId, from, to)).thenReturn(moved);
+        when(s3Service.moveResource(userId, from, to)).thenReturn(moved);
 
         mockMvc.perform(get("/api/resource/move")
                         .param("from", from)
@@ -142,7 +142,7 @@ class ResourceControllerTest {
                 .size(0L)
                 .type(ResourceType.DIRECTORY)
                 .build();
-        when(s3UserService.search(userId, query)).thenReturn(List.of(item));
+        when(s3Service.search(userId, query)).thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/resource/search")
                         .param("query", query)
@@ -165,7 +165,7 @@ class ResourceControllerTest {
                 .size(5L)
                 .type(ResourceType.FILE)
                 .build();
-        when(s3UserService.upload(eq(userId), eq(path), any())).thenReturn(List.of(item));
+        when(s3Service.upload(eq(userId), eq(path), any())).thenReturn(List.of(item));
 
         mockMvc.perform(multipart("/api/resource")
                         .file(file1)
@@ -182,7 +182,7 @@ class ResourceControllerTest {
     void getResource_withPodamData_returnsInfo() throws Exception {
         long userId = 15L;
         var info = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        when(s3UserService.getResource(userId, info.path())).thenReturn(info);
+        when(s3Service.getResource(userId, info.path())).thenReturn(info);
 
         mockMvc.perform(get("/api/resource")
                         .param("path", info.path())
@@ -201,7 +201,7 @@ class ResourceControllerTest {
         String query = "search";
         var item1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
         var item2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        when(s3UserService.search(userId, query)).thenReturn(List.of(item1, item2));
+        when(s3Service.search(userId, query)).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/resource/search")
                         .param("query", query)
