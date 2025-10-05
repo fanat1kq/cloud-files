@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.exception;
+package ru.example.cloudfiles.exception.validation;
 
 public class InvalidSearchQueryException extends RuntimeException {
     public InvalidSearchQueryException(String message) {

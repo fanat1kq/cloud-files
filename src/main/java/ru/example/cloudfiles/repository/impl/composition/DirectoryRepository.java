@@ -8,7 +8,9 @@ import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.example.cloudfiles.exception.S3RepositoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.S3RepositoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryCreationException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
 
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -21,11 +23,13 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 @Slf4j
 public class DirectoryRepository {
+
     private final MinioClient minioClient;
     private final PathValidator pathValidator;
     private final ObjectRepository objectOps;
 
     public void createDirectory(String bucketName, String path) {
+
         pathValidator.validatePath(path);
 
         extractAllDirectories(path).stream()
@@ -48,18 +52,20 @@ public class DirectoryRepository {
 
     private void createEmptyObject(String bucketName, String path) {
         try {
+
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(path)
                     .stream(InputStream.nullInputStream(), 0, -1)
                     .build());
         } catch (Exception e) {
-            throw new S3RepositoryException("Failed to create directory: " + path, e);
+            throw new DirectoryCreationException(path, e);
         }
     }
 
     public List<String> findAllNamesByPrefix(String bucket, String prefix, boolean recursive) {
         try {
+
             return StreamSupport.stream(
                             minioClient.listObjects(ListObjectsArgs.builder()
                                     .bucket(bucket)
@@ -69,11 +75,12 @@ public class DirectoryRepository {
                     .map(this::extractObjectName)
                     .toList();
         } catch (Exception e) {
-            throw new S3RepositoryException("Failed to find", e);
+            throw new DirectoryNotExistException(prefix);
         }
     }
 
     private String extractObjectName(Result<Item> itemResult) {
+
         try {
             return itemResult.get().objectName();
         } catch (Exception e) {

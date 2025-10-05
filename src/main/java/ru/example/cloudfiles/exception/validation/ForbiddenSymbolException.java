@@ -1,13 +1,14 @@
-package ru.example.cloudfiles.exception;
+package ru.example.cloudfiles.exception.validation;
 
 import java.util.List;
 
+import static ru.example.cloudfiles.util.Constants.MESSAGE_FORBIDDEN_CHARACTERS;
+import static ru.example.cloudfiles.util.Constants.MESSAGE_WITH_PATH;
+
 public class ForbiddenSymbolException extends RuntimeException {
-    private static final String DEFAULT_MESSAGE = "Path contains forbidden characters";
-    private static final String MESSAGE_WITH_PATH = "Path '%s' contains forbidden characters: %s";
 
     public ForbiddenSymbolException() {
-        super(DEFAULT_MESSAGE);
+        super(MESSAGE_FORBIDDEN_CHARACTERS);
     }
 
     public ForbiddenSymbolException(String message) {

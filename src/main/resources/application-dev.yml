@@ -17,17 +17,17 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
-  #      database: 0  # сессии
-  #    cache:
-  #      type: redis
-  #      redis:
-  #        database: 1
   session:
     store-type: redis
     redis:
       namespace: myapp:session
       flush-mode: on_save
       save-mode: on_set_attribute
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:5MB}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:15MB}
 
 minio:
   url: ${MINIO_URL}

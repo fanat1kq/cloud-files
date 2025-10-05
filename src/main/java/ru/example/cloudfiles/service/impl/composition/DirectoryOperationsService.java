@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.NotDirectoryException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.NotDirectoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -37,6 +37,7 @@ public class DirectoryOperationsService {
 
         String techPath = paths.toTechnicalPath(userId, path);
         s3Repo.createDirectory(props.getBucket(), techPath);
+
         return resourceMapper.toDto(userId, s3Repo.getResourceByPath(props.getBucket(), techPath));
     }
 

@@ -4,6 +4,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.example.cloudfiles.config.properties.MinioProperties;
@@ -15,7 +16,8 @@ public class MinioConfig {
     private final MinioProperties minioProperties;
 
     @Bean
-    public MinioClient minioClient() throws Exception {
+    @SneakyThrows
+    public MinioClient minioClient() {
         MinioClient minio = MinioClient.builder()
                 .endpoint(minioProperties.getUrl())
                 .credentials(minioProperties.getAccessKey(),

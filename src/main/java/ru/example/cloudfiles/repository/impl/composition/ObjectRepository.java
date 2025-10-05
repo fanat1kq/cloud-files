@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.example.cloudfiles.entity.Resource;
-import ru.example.cloudfiles.exception.S3RepositoryException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.S3RepositoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSaveException;
 
 import java.io.InputStream;
 
@@ -18,10 +19,12 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class ObjectRepository {
+
     private final MinioClient minioClient;
     private final PathValidator pathValidator;
 
     public Resource getResourceByPath(String bucket, String path) {
+
         pathValidator.validatePath(path);
 
         try {
@@ -40,13 +43,14 @@ public class ObjectRepository {
             if ("NoSuchKey".equals(e.errorResponse().code())) {
                 throw new ResourceNotFoundException(path);
             }
-            throw new S3RepositoryException("Failed to find resource by path", e);
+            throw new ResourceNotFoundException(path);
         } catch (Exception e) {
             throw new S3RepositoryException("Repository exception for path", e);
         }
     }
 
     public void saveResource(String bucket, String path, InputStream dataStream) {
+
         pathValidator.validatePath(path);
 
         try {
@@ -56,11 +60,12 @@ public class ObjectRepository {
                     .stream(dataStream, -1, 10485760)
                     .build());
         } catch (Exception e) {
-            throw new S3RepositoryException("Failed to save resource", e);
+            throw new ResourceSaveException(path, e);
         }
     }
 
     public boolean isObjectExists(String bucketName, String path) {
+
         pathValidator.validatePath(path);
 
         try {

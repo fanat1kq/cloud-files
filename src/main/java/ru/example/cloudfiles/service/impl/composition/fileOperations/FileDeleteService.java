@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
@@ -18,8 +18,10 @@ public class FileDeleteService {
     private final MinioProperties props;
 
     public void deleteResource(long userId, String path) {
+
         if (!fileQueryService.resourceExists(userId, path))
             throw new ResourceNotFoundException(path);
+
         s3Repo.deleteResource(props.getBucket(), paths.toTechnicalPath(userId, path));
     }
 }

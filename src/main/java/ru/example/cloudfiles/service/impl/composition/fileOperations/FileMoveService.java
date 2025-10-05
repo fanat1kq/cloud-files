@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
@@ -23,6 +23,7 @@ public class FileMoveService {
     private final MinioProperties props;
 
     public ResourceInfoResponseDTO moveResource(long userId, String oldPath, String newPath) {
+
         validateMove(userId, oldPath, newPath);
 
         String oldTech = paths.toTechnicalPath(userId, oldPath);
@@ -39,6 +40,7 @@ public class FileMoveService {
     }
 
     private void moveDir(String oldTech, String newTech) {
+
         String oldPrefix = oldTech.endsWith("/") ? oldTech : oldTech + "/";
         String newPrefix = newTech.endsWith("/") ? newTech : newTech + "/";
 
@@ -58,11 +60,13 @@ public class FileMoveService {
     }
 
     private void moveFile(String oldTech, String newTech) {
+
         var resource = s3Repo.getResourceByPath(props.getBucket(), oldTech);
         s3Repo.saveResource(props.getBucket(), newTech, resource.dataStream());
     }
 
     private void validateMove(long userId, String oldPath, String newPath) {
+
         if (!fileQueryService.resourceExists(userId, oldPath))
             throw new ResourceNotFoundException(oldPath);
         if (fileQueryService.resourceExists(userId, newPath))

@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import ru.example.cloudfiles.entity.Resource;
-import ru.example.cloudfiles.exception.S3RepositoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryDeletionException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceDeletionException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.repository.impl.composition.DirectoryRepository;
 import ru.example.cloudfiles.repository.impl.composition.ObjectRepository;
@@ -22,21 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class MinioRepository implements S3Repository {
+
     private final MinioClient minioClient;
-
     private final ObjectRepository objectRepository;
-
     private final DirectoryRepository directoryRepository;
-
     private final PathValidator pathValidator;
 
     @Override
     public List<String> findAllNamesByPrefix(String bucket, String prefix, boolean recursive) {
+
         return directoryRepository.findAllNamesByPrefix(bucket, prefix, recursive);
     }
 
     @Override
     public void deleteResource(String bucketName, String path) {
+
         pathValidator.validatePath(path);
 
         if (StringUtils.endsWithIgnoreCase(path, "/")) {
@@ -58,38 +59,43 @@ public class MinioRepository implements S3Repository {
                             .build());
 
         } catch (Exception e) {
-            throw new S3RepositoryException("Failed to delete directory: " + path, e);
+            throw new DirectoryDeletionException(path, e);
         }
     }
 
     private void deleteSingleObject(String bucketName, String path) {
+
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(bucketName)
                     .object(path)
                     .build());
         } catch (Exception e) {
-            throw new S3RepositoryException("Failed to delete object: " + path, e);
+            throw new ResourceDeletionException(path, e);
         }
     }
 
     @Override
     public Resource getResourceByPath(String bucket, String path) {
+
         return objectRepository.getResourceByPath(bucket, path);
     }
 
     @Override
     public void saveResource(String bucket, String path, InputStream dataStream) {
+
         objectRepository.saveResource(bucket, path, dataStream);
     }
 
     @Override
     public void createDirectory(String bucketName, String path) {
+
         directoryRepository.createDirectory(bucketName, path);
     }
 
     @Override
     public boolean isObjectExists(String bucketName, String path) {
+
         return objectRepository.isObjectExists(bucketName, path);
     }
 }

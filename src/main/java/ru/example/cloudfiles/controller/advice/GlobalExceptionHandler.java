@@ -10,16 +10,22 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.example.cloudfiles.dto.ErrorResponse;
-import ru.example.cloudfiles.exception.EmptyPathException;
-import ru.example.cloudfiles.exception.ForbiddenSymbolException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.bucket.BucketCreationException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.bucket.BucketDeletionException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.DirectoryCreationException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.DirectoryNotExistException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.NotDirectoryException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.*;
-import ru.example.cloudfiles.exception.UserAlreadyExistsException;
-import ru.example.cloudfiles.exception.UserNotFoundException;
+import ru.example.cloudfiles.exception.validation.ForbiddenSymbolException;
+import ru.example.cloudfiles.exception.storageOperationImpl.bucket.BucketCreationException;
+import ru.example.cloudfiles.exception.storageOperationImpl.bucket.BucketDeletionException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryCreationException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.NotDirectoryException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceDeletionException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceExistenceCheckException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceListingException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceRetrievalException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSaveException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.StorageOperationException;
+import ru.example.cloudfiles.exception.user.UserAlreadyExistsException;
+import ru.example.cloudfiles.exception.user.UserNotFoundException;
 
 import java.util.List;
 
@@ -28,7 +34,6 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
-            EmptyPathException.class,
             ForbiddenSymbolException.class,
             IllegalArgumentException.class,
             NotDirectoryException.class

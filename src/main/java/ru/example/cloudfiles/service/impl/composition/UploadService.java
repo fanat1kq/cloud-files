@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.entity.Resource;
-import ru.example.cloudfiles.exception.S3RepositoryException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.DirectoryNotExistException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceUploadException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -26,6 +26,7 @@ public class UploadService {
     private final ResourceMapper resourceMapper;
 
     public List<ResourceInfoResponseDTO> upload(long userId, String uploadPath, MultipartFile[] files) {
+
         validateUpload(userId, uploadPath, files);
         createDirs(userId, uploadPath, files);
 
@@ -36,6 +37,7 @@ public class UploadService {
     }
 
     private void validateUpload(long userId, String uploadPath, MultipartFile[] files) {
+
         if (!uploadPath.isBlank() && (!paths.isDirectory(uploadPath) || !resourceExists(userId, uploadPath))) {
             throw new DirectoryNotExistException(uploadPath);
         }
@@ -58,27 +60,34 @@ public class UploadService {
     }
 
     private Set<String> extractDirs(String fullPath) {
+
         Set<String> dirs = new HashSet<>();
+
         for (int i = 0; i < fullPath.length(); i++) {
             if (fullPath.charAt(i) == '/') dirs.add(fullPath.substring(0, i + 1));
         }
+
         if (paths.isDirectory(fullPath)) dirs.add(fullPath);
+
         return dirs;
     }
 
     private Resource uploadFile(long userId, String uploadPath, MultipartFile file) {
+
         String filename = Objects.requireNonNull(file.getOriginalFilename(), "Filename is null");
         String techPath = paths.toTechnicalPath(userId, uploadPath + filename);
 
         try (var is = file.getInputStream()) {
             s3Repo.saveResource(props.getBucket(), techPath, is);
+
             return s3Repo.getResourceByPath(props.getBucket(), techPath);
         } catch (Exception e) {
-            throw new S3RepositoryException("Upload failed: " + filename, e);
+            throw new ResourceUploadException(filename, e);
         }
     }
 
     private boolean resourceExists(long userId, String path) {
+
         return s3Repo.isObjectExists(props.getBucket(), paths.toTechnicalPath(userId, path));
     }
 }

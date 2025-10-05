@@ -19,7 +19,9 @@ public class PathManager {
     }
 
     public String toUserPath(long userId, String technicalPath) {
+
         String userDirectory = getUserDirectory(userId);
+
         return technicalPath.startsWith(userDirectory)
                 ? technicalPath.substring(userDirectory.length())
                 : technicalPath;

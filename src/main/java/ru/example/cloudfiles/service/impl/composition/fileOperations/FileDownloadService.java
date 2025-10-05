@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.DownloadResult;
-import ru.example.cloudfiles.exception.StorageOperationImpl.directory.ZipCreationException;
-import ru.example.cloudfiles.exception.StorageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperationImpl.directory.ZipCreationException;
+import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
@@ -23,12 +23,14 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class FileDownloadService {
+
     private final S3Repository s3Repo;
     private final FileQueryService fileQueryService;
     private final PathManager paths;
     private final MinioProperties props;
 
     public DownloadResult prepareDownload(long userId, String path) {
+
         return new DownloadResult(
                 download(userId, path),
                 "attachment; filename*=UTF-8''" + URLEncoder.encode(extractFileName(path),
@@ -37,6 +39,7 @@ public class FileDownloadService {
     }
 
     public StreamingResponseBody download(long userId, String path) {
+
         var resourceNames = fileQueryService.findAllNames(userId, path);
         return resourceNames.size() == 1 ?
                 createSingleFileResponse(resourceNames.getFirst()) :
@@ -44,11 +47,13 @@ public class FileDownloadService {
     }
 
     private String extractFileName(String path) {
+
         String baseName = Paths.get(path).getFileName().toString();
         return path.endsWith("/") ? baseName + ".zip" : baseName;
     }
 
     private StreamingResponseBody createSingleFileResponse(String resourceName) {
+
         return os -> {
             try (var is = s3Repo.getResourceByPath(props.getBucket(), resourceName).dataStream()) {
                 is.transferTo(os);
@@ -59,6 +64,7 @@ public class FileDownloadService {
     }
 
     private StreamingResponseBody createZipResponse(long userId, List<String> resourceNames) {
+
         return os -> {
             try (var zos = new ZipOutputStream(os)) {
                 resourceNames.forEach(name -> addToZip(userId, name, zos));
@@ -67,6 +73,7 @@ public class FileDownloadService {
     }
 
     private void addToZip(long userId, String resourceName, ZipOutputStream zos) {
+
         try {
             var resource = s3Repo.getResourceByPath(props.getBucket(), resourceName);
             zos.putNextEntry(new ZipEntry(paths.toUserPath(userId, resource.path())));
@@ -77,7 +84,7 @@ public class FileDownloadService {
             }
             zos.closeEntry();
         } catch (IOException e) {
-            throw new ZipCreationException("Failed to add file to zip: " + resourceName, e);
+            throw new ZipCreationException(resourceName, e);
         }
     }
 }

@@ -68,6 +68,7 @@ public class AuthService {
     private void authenticateUser(CustomUserDetails userDetails,
                                   HttpServletRequest httpRequest,
                                   HttpServletResponse httpResponse) {
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
 

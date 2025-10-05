@@ -13,10 +13,13 @@ import java.nio.file.Paths;
 @Component
 @RequiredArgsConstructor
 public class ResourceMapper {
+
     private final PathManager paths;
 
     public ResourceInfoResponseDTO toDto(long userId, Resource resource) {
+
         boolean isDir = paths.isDirectory(resource.path());
+
         String userPath = paths.toUserPath(userId, resource.path());
         Path pathObj = Paths.get(userPath);
 
@@ -28,6 +31,7 @@ public class ResourceMapper {
     }
 
     private String extractPath(long userId, Resource resource, boolean isDir, Path pathObj) {
+
         String userDir = paths.getUserDirectory(userId);
         int fileNameLen = pathObj.getFileName().toString().length();
         int endIndex = resource.path().length() - fileNameLen - (isDir ? 1 : 0);

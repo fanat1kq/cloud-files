@@ -22,6 +22,7 @@ public interface UserMapper {
     CustomUserDetails toCustomUserDetails(User user);
 
     default User toEntityWithPassword(UserRequestDTO dto, PasswordEncoder passwordEncoder) {
+
         User user = toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.password()));
         return user;
