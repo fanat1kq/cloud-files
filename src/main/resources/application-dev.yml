@@ -40,7 +40,7 @@ minio:
 server:
   servlet:
     session:
-      timeout: 1800
+      timeout: ${SESSION_TIMEOUT}
 
 springdoc:
   api-docs:

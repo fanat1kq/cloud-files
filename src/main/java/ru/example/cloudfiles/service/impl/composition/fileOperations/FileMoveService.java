@@ -44,7 +44,7 @@ public class FileMoveService {
         String oldPrefix = oldTech.endsWith("/") ? oldTech : oldTech + "/";
         String newPrefix = newTech.endsWith("/") ? newTech : newTech + "/";
 
-        var sourcePaths = s3Repo.findAllNamesByPrefix(props.getBucket(), oldPrefix, false);
+        var sourcePaths = s3Repo.findAllNamesByPrefix(props.getBucket(), oldPrefix, true);
 
         sourcePaths.forEach(oldName -> {
             String newName = newPrefix + oldName.substring(oldPrefix.length());

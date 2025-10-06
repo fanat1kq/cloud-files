@@ -48,7 +48,7 @@ public class MinioRepository implements S3Repository {
     private void deleteDirectory(String bucketName, String path) {
 
         try {
-            List<String> objectNames = directoryRepository.findAllNamesByPrefix(bucketName, path, false);
+            List<String> objectNames = directoryRepository.findAllNamesByPrefix(bucketName, path, true);
 
             if (!objectNames.isEmpty()) {
                 for (String objectName : objectNames) {

@@ -17,11 +17,19 @@ public abstract class AbstractMinioTestContainer {
             .withPassword("minioTestPass")
             .withExposedPorts(9000);
 
-    @DynamicPropertySource
-    static void minioProperties(DynamicPropertyRegistry registry) {
-        registry.add("cloudstorage.storage.minio.endpoint", MINIO_CONTAINER::getS3URL);
-        registry.add("cloudstorage.storage.minio.user", MINIO_CONTAINER::getUserName);
-        registry.add("cloudstorage.storage.minio.password", MINIO_CONTAINER::getPassword);
-        registry.add("cloudstorage.storage.minio.bucket", () -> BUCKET);
+    public static String getUsername() {
+        return MINIO_CONTAINER.getUserName();
     }
+
+    public static String getPassword() {
+        return MINIO_CONTAINER.getPassword();
+    }
+
+    public static String getUrl() {
+        return MINIO_CONTAINER.getS3URL();
+    }
+
+
+
+
 }

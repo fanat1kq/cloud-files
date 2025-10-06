@@ -34,6 +34,7 @@ public class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
         registry.add("spring.datasource.url", AbstractPostgreSQLTestContainer::getUrl);
         registry.add("spring.datasource.username", AbstractPostgreSQLTestContainer::getUsername);
         registry.add("spring.datasource.password", AbstractPostgreSQLTestContainer::getPassword);
+
     }
 
     @BeforeAll

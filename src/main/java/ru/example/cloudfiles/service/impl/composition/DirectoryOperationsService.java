@@ -25,6 +25,7 @@ public class DirectoryOperationsService {
     private final ResourceMapper resourceMapper;
 
     public void createUserDir(long userId) {
+
         log.debug("Creating user directory for userId: {}", userId);
         s3Repo.createDirectory(props.getBucket(), paths.getUserDirectory(userId));
     }

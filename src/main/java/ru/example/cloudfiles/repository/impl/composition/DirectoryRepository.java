@@ -14,10 +14,9 @@ import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryN
 import ru.example.cloudfiles.validation.PathValidator;
 
 import java.io.InputStream;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.StreamSupport;
 
 @Repository
@@ -40,12 +39,13 @@ public class DirectoryRepository {
 
     private Set<String> extractAllDirectories(String path) {
 
-        Set<String> directories = new LinkedHashSet<>();
+        Set<String> directories = ConcurrentHashMap.newKeySet();
 
-        IntStream.range(0, path.length())
-                .filter(i -> path.charAt(i) == '/')
-                .mapToObj(i -> path.substring(0, i + 1))
-                .forEach(directories::add);
+        for (int i = 0; i < path.length(); i++) {
+            if (path.charAt(i) == '/') {
+                directories.add(path.substring(0, i + 1));
+            }
+        }
         directories.add(path);
 
         return directories;
