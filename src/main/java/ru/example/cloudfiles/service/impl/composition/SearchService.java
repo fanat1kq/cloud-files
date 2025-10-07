@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.validation.InvalidSearchQueryException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;

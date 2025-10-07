@@ -8,7 +8,7 @@ import io.minio.errors.ErrorResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.S3RepositoryException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSaveException;

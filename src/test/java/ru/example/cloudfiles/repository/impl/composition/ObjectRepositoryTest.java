@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.repository.impl;
+package ru.example.cloudfiles.repository.impl.composition;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ListObjectsArgs;
@@ -24,11 +24,10 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSaveException;
-import ru.example.cloudfiles.repository.impl.composition.ObjectRepository;
-import ru.example.cloudfiles.service.AbstractMinioTestContainer;
+import ru.example.cloudfiles.repository.AbstractMinioTestContainer;
 import ru.example.cloudfiles.validation.PathValidator;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -49,7 +48,7 @@ import static org.mockito.Mockito.doNothing;
         "spring.liquibase.enabled=false",
         "preliquibase.enabled=false"
 })
-public class ObjectRepositoryTest extends AbstractMinioTestContainer {
+class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     private static final String BUCKET = "test-bucket";
 
@@ -65,7 +64,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
     private PodamFactory factory;
 
     @DynamicPropertySource
-    public static void registerProperties(DynamicPropertyRegistry registry) {
+    static void registerProperties(DynamicPropertyRegistry registry) {
         registry.add("minio.url", AbstractMinioTestContainer::getUrl);
         registry.add("minio.access-key", AbstractMinioTestContainer::getUsername);
         registry.add("minio.secret-key", AbstractMinioTestContainer::getPassword);
@@ -73,18 +72,18 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
     }
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         MINIO_CONTAINER.start();
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         MINIO_CONTAINER.stop();
     }
 
     @BeforeEach
     @SneakyThrows
-    public void init() {
+    void init() {
 
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(BUCKET).build())) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET).build());
@@ -96,14 +95,14 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     @AfterEach
     @SneakyThrows
-    public void cleanup() {
+    void cleanup() {
         clearBucket();
     }
 
     @Test
     @DisplayName("Should get resource by path and return valid DTO")
     @SneakyThrows
-    public void shouldGetResourceByPathAndReturnValidDTO() {
+    void shouldGetResourceByPathAndReturnValidDTO() {
 
         String objectPath = factory.manufacturePojo(String.class);
         String content = factory.manufacturePojo(String.class);
@@ -126,7 +125,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should throw ResourceNotFoundException when resource not exists")
-    public void shouldThrowResourceNotFoundExceptionWhenResourceNotExists() {
+    void shouldThrowResourceNotFoundExceptionWhenResourceNotExists() {
 
         String nonExistingPath = factory.manufacturePojo(String.class);
 
@@ -137,7 +136,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should save resource successfully")
-    public void shouldSaveResourceSuccessfully() {
+    void shouldSaveResourceSuccessfully() {
 
         String objectPath = factory.manufacturePojo(String.class);
         String content = factory.manufacturePojo(String.class);
@@ -154,7 +153,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
     @Test
     @DisplayName("Should throw ResourceSaveException on save failure")
     @SneakyThrows
-    public void shouldThrowResourceSaveExceptionOnSaveFailure() {
+    void shouldThrowResourceSaveExceptionOnSaveFailure() {
         String objectPath = factory.manufacturePojo(String.class);
 
         @Cleanup
@@ -172,7 +171,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should return true when object exists")
-    public void shouldReturnTrueWhenObjectExists() {
+    void shouldReturnTrueWhenObjectExists() {
 
         String objectPath = factory.manufacturePojo(String.class);
         createObject(objectPath, factory.manufacturePojo(String.class));
@@ -184,7 +183,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should return false when object not exists")
-    public void shouldReturnFalseWhenObjectNotExists() {
+    void shouldReturnFalseWhenObjectNotExists() {
 
         String nonExistingPath = factory.manufacturePojo(String.class);
 
@@ -196,7 +195,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
     @Test
     @DisplayName("Should handle empty file")
     @SneakyThrows
-    public void shouldHandleEmptyFile() {
+    void shouldHandleEmptyFile() {
 
         String objectPath = factory.manufacturePojo(String.class);
         createObject(objectPath, "");
@@ -216,7 +215,7 @@ public class ObjectRepositoryTest extends AbstractMinioTestContainer {
     @Test
     @DisplayName("Should handle binary data")
     @SneakyThrows
-    public void shouldHandleBinaryData() {
+    void shouldHandleBinaryData() {
 
         String objectPath = factory.manufacturePojo(String.class);
         byte[] binaryData = new byte[]{0x01, 0x02, 0x03, 0x04, 0x05};

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryDeletionException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceDeletionException;
 import ru.example.cloudfiles.repository.S3Repository;

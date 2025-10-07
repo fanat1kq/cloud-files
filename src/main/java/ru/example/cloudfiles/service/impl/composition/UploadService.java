@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceUploadException;
@@ -14,7 +14,12 @@ import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor

@@ -1,16 +1,21 @@
 package ru.example.cloudfiles.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import ru.example.cloudfiles.dto.ResourceType;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
@@ -43,35 +48,50 @@ class DirectoryControllerTest {
 
     private PodamFactory factory;
 
+    private static RequestPostProcessor withCustomUser(long id, String username) {
+
+        return request -> {
+            CustomUserDetails userDetails = new CustomUserDetails();
+            userDetails.setId(id);
+            userDetails.setUsername(username);
+            userDetails.setPassword("password");
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    "password",
+                    userDetails.getAuthorities()
+            );
+
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authentication);
+            SecurityContextHolder.setContext(securityContext);
+
+            return request;
+        };
+    }
+
     @BeforeEach
     void setUp() {
         factory = new PodamFactoryImpl();
     }
 
-    private CustomUserDetails buildUser(long id, String username) {
-        CustomUserDetails cud = factory.manufacturePojo(CustomUserDetails.class);
-        cud.setId(id);
-        cud.setUsername(username);
-        cud.setPassword("nop");
-        return cud;
-    }
-
     @Test
+    @SneakyThrows
     @DisplayName("GET /api/directory returns directory listing for authenticated user")
-    void getDirectory_returnsList() throws Exception {
+    void getDirectory_returnsList() {
+
         String path = "/docs";
         long userId = 42L;
+        String username = "john";
 
-        var item1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        item1 = ResourceInfoResponseDTO.builder()
+        var item1 = ResourceInfoResponseDTO.builder()
                 .path("/docs")
                 .name("docs")
                 .size(0L)
                 .type(ResourceType.DIRECTORY)
                 .build();
 
-        var item2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        item2 = ResourceInfoResponseDTO.builder()
+        var item2 = ResourceInfoResponseDTO.builder()
                 .path("/docs/readme.txt")
                 .name("readme.txt")
                 .size(128L)
@@ -82,8 +102,8 @@ class DirectoryControllerTest {
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
-                        .header("X-User-Id", String.valueOf(userId))
-                        .header("X-User-Name", "john"))
+                        .with(withCustomUser(userId, username))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].path").value("/docs"))
                 .andExpect(jsonPath("$[0].name").value("docs"))
@@ -94,13 +114,15 @@ class DirectoryControllerTest {
     }
 
     @Test
+    @SneakyThrows
     @DisplayName("POST /api/directory creates directory and returns its info")
-    void createDirectory_createsAndReturnsResource() throws Exception {
+    void createDirectory_createsAndReturnsResource() {
+
         String path = "pics/new";
         long userId = 7L;
+        String username = "alice";
 
-        var created = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        created = ResourceInfoResponseDTO.builder()
+        var created = ResourceInfoResponseDTO.builder()
                 .path(path)
                 .name("new")
                 .size(0L)
@@ -112,8 +134,7 @@ class DirectoryControllerTest {
         mockMvc.perform(post("/api/directory")
                         .param("path", path)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .header("X-User-Id", String.valueOf(userId))
-                        .header("X-User-Name", "alice")
+                        .with(withCustomUser(userId, username))
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.path").value(path))
@@ -122,21 +143,25 @@ class DirectoryControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/directory with blank path returns 500 Internal Server Error (as per current handler)")
-    void createDirectory_blankPath_returnsInternalServerError() throws Exception {
+    @SneakyThrows
+    @DisplayName("POST /api/directory with blank path returns 500 Internal Server Error")
+    void createDirectory_blankPath_returnsInternalServerError() {
+
         mockMvc.perform(post("/api/directory")
                         .param("path", " ")
-                        .header("X-User-Id", String.valueOf(1L))
-                        .header("X-User-Name", "bob")
+                        .with(withCustomUser(1L, "bob"))
                         .with(csrf()))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
+    @SneakyThrows
     @DisplayName("GET /api/directory with Podam-generated data returns directory listing")
-    void getDirectory_withPodamData_returnsList() throws Exception {
+    void getDirectory_withPodamData_returnsList() {
+
         String path = "/documents";
         long userId = 123L;
+        String username = "podam-user";
 
         var item1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
         var item2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
@@ -159,8 +184,8 @@ class DirectoryControllerTest {
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
-                        .header("X-User-Id", String.valueOf(userId))
-                        .header("X-User-Name", "podam-user"))
+                        .with(withCustomUser(userId, username))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].path").value(item1.path()))
                 .andExpect(jsonPath("$[0].name").value(item1.name()))
@@ -171,10 +196,13 @@ class DirectoryControllerTest {
     }
 
     @Test
+    @SneakyThrows
     @DisplayName("POST /api/directory with Podam data creates directory")
-    void createDirectory_withPodamData_createsAndReturnsResource() throws Exception {
+    void createDirectory_withPodamData_createsAndReturnsResource() {
+
         String path = "photos/vacation";
         long userId = 456L;
+        String username = "podam-user";
 
         var created = factory.manufacturePojo(ResourceInfoResponseDTO.class);
         created = ResourceInfoResponseDTO.builder()
@@ -189,42 +217,11 @@ class DirectoryControllerTest {
         mockMvc.perform(post("/api/directory")
                         .param("path", path)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .header("X-User-Id", String.valueOf(userId))
-                        .header("X-User-Name", "podam-user")
+                        .with(withCustomUser(userId, username))
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.path").value(path))
                 .andExpect(jsonPath("$.name").value(created.name()))
                 .andExpect(jsonPath("$.type").value("DIRECTORY"));
-    }
-
-    @TestConfiguration
-    static class TestAuthPrincipalResolver implements org.springframework.web.servlet.config.annotation.WebMvcConfigurer {
-        @Override
-        public void addArgumentResolvers(java.util.List<org.springframework.web.method.support.HandlerMethodArgumentResolver> resolvers) {
-            resolvers.add(new org.springframework.web.method.support.HandlerMethodArgumentResolver() {
-                @Override
-                public boolean supportsParameter(org.springframework.core.MethodParameter parameter) {
-                    return parameter.hasParameterAnnotation(org.springframework.security.core.annotation.AuthenticationPrincipal.class)
-                            && parameter.getParameterType().isAssignableFrom(ru.example.cloudfiles.security.CustomUserDetails.class);
-                }
-
-                @Override
-                public Object resolveArgument(org.springframework.core.MethodParameter parameter,
-                                              org.springframework.web.method.support.ModelAndViewContainer mavContainer,
-                                              org.springframework.web.context.request.NativeWebRequest webRequest,
-                                              org.springframework.web.bind.support.WebDataBinderFactory binderFactory) {
-                    String idHeader = webRequest.getHeader("X-User-Id");
-                    String nameHeader = webRequest.getHeader("X-User-Name");
-                    long id = idHeader != null ? Long.parseLong(idHeader) : 1L;
-                    String name = nameHeader != null ? nameHeader : "test";
-                    ru.example.cloudfiles.security.CustomUserDetails cud = new ru.example.cloudfiles.security.CustomUserDetails();
-                    cud.setId(id);
-                    cud.setUsername(name);
-                    cud.setPassword("nop");
-                    return cud;
-                }
-            });
-        }
     }
 }

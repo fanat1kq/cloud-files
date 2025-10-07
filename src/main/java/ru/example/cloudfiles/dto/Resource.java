@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.entity;
+package ru.example.cloudfiles.dto;
 
 import java.io.InputStream;
 import java.util.Objects;

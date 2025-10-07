@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.repository.impl;
+package ru.example.cloudfiles.repository.impl.composition;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ListObjectsArgs;
@@ -22,8 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import ru.example.cloudfiles.repository.impl.composition.DirectoryRepository;
-import ru.example.cloudfiles.service.AbstractMinioTestContainer;
+import ru.example.cloudfiles.repository.AbstractMinioTestContainer;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -40,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.liquibase.enabled=false",
         "preliquibase.enabled=false"
 })
-public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
+class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     private static final String BUCKET = "test-bucket";
 
@@ -53,7 +52,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
     private PodamFactory factory;
 
     @DynamicPropertySource
-    public static void registerProperties(DynamicPropertyRegistry registry) {
+    static void registerProperties(DynamicPropertyRegistry registry) {
         registry.add("minio.url", AbstractMinioTestContainer::getUrl);
         registry.add("minio.access-key", AbstractMinioTestContainer::getUsername);
         registry.add("minio.secret-key", AbstractMinioTestContainer::getPassword);
@@ -61,18 +60,18 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
     }
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         MINIO_CONTAINER.start();
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         MINIO_CONTAINER.stop();
     }
 
     @BeforeEach
     @SneakyThrows
-    public void init() {
+    void init() {
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(BUCKET).build())) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET).build());
         }
@@ -80,13 +79,13 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
     }
 
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         clearBucket();
     }
 
     @Test
     @DisplayName("Should find all directories by prefix recursively")
-    public void shouldFindAllDirectoriesByPrefixRecursively() {
+    void shouldFindAllDirectoriesByPrefixRecursively() {
 
         String basePath = factory.manufacturePojo(String.class) + "/";
         String year = factory.manufacturePojo(String.class) + "/";
@@ -112,7 +111,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should create directory with all parent directories")
-    public void shouldCreateDirectoryWithAllParents() {
+    void shouldCreateDirectoryWithAllParents() {
 
         String level1 = factory.manufacturePojo(String.class) + "/";
         String level2 = factory.manufacturePojo(String.class) + "/";
@@ -128,7 +127,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should not create duplicate directories")
-    public void shouldNotCreateDuplicateDirectories() {
+    void shouldNotCreateDuplicateDirectories() {
 
         String existingBase = factory.manufacturePojo(String.class) + "/";
         String existingDir = factory.manufacturePojo(String.class) + "/";
@@ -145,7 +144,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should extract all directories from path")
-    public void shouldExtractAllDirectoriesFromPath() {
+    void shouldExtractAllDirectoriesFromPath() {
 
         String a = factory.manufacturePojo(String.class) + "/";
         String b = factory.manufacturePojo(String.class) + "/";
@@ -166,7 +165,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should handle root directory creation")
-    public void shouldHandleRootDirectoryCreation() {
+    void shouldHandleRootDirectoryCreation() {
 
         String singleDir = factory.manufacturePojo(String.class) + "/";
 
@@ -177,7 +176,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should be empty when directory not found")
-    public void shouldBeEmptyWhenDirectoryNotFound() {
+    void shouldBeEmptyWhenDirectoryNotFound() {
 
         String nonExistingPrefix = factory.manufacturePojo(String.class) + "/";
 
@@ -188,7 +187,7 @@ public class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     @Test
     @DisplayName("Should handle complex nested directory structure")
-    public void shouldHandleComplexNestedDirectoryStructure() {
+    void shouldHandleComplexNestedDirectoryStructure() {
 
         String project = factory.manufacturePojo(String.class) + "/";
         String src = factory.manufacturePojo(String.class) + "/";

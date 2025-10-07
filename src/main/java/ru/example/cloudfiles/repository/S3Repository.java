@@ -1,7 +1,7 @@
 package ru.example.cloudfiles.repository;
 
 
-import ru.example.cloudfiles.entity.Resource;
+import ru.example.cloudfiles.dto.Resource;
 
 import java.io.InputStream;
 import java.util.List;

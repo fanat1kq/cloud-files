@@ -38,23 +38,23 @@ public class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
     }
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         POSTGRES_CONTAINER.start();
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         POSTGRES_CONTAINER.stop();
     }
 
     @BeforeEach
-    public void init() {
+    void init() {
         factory = new PodamFactoryImpl();
     }
 
     @Test
     @DisplayName("Test getting user by username")
-    public void findUserByName(SoftAssertions softly) {
+    void findUserByName(SoftAssertions softly) {
 
         User user = new User();
         user.setUsername(factory.manufacturePojo(String.class));
