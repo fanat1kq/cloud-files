@@ -1,18 +1,17 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5433/
-    username: ${secrets.postgres.username}
-    password: ${secrets.postgres.password}
-
-
   liquibase:
     enabled: false
   jpa:
     hibernate:
       ddl-auto: create
-    defer-datasource-initialization: true
-minio:
-  url: http://localhost:9000
-  access-key: minioTest
-  secret-key: minioTestPass
-  bucket: test-bucket
+preliquibase:
+  enabled: false
+secrets:
+  postgres:
+    username: postgres_test
+    password: postgres_test
+    url: jdbc:postgresql://localhost:5433/test
+  minio:
+    url: http://localhost:9000
+    access-key: minio_test
+    secret-key: minio_test_pass

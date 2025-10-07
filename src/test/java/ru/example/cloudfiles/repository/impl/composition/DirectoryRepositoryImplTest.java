@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import ru.example.cloudfiles.repository.AbstractMinioTestContainer;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -34,11 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
+@ActiveProfiles({"test", "test-minio"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@TestPropertySource(properties = {
-        "spring.liquibase.enabled=false",
-        "preliquibase.enabled=false"
-})
 class DirectoryRepositoryImplTest extends AbstractMinioTestContainer {
 
     private static final String BUCKET = "test-bucket";

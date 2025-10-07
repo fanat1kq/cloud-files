@@ -25,6 +25,7 @@ services:
       - "8082:80"
     networks:
       - file-storage-network
+
   app:
     build:
       context: .

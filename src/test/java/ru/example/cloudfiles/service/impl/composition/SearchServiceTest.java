@@ -8,8 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.example.cloudfiles.config.properties.MinioProperties;
-import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.dto.Resource;
+import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.exception.validation.InvalidSearchQueryException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
@@ -61,6 +61,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should search resources successfully with matching query")
     void searchOk() {
+
         long userId = factory.manufacturePojo(Long.class);
         String query = "doc";
         String bucket = factory.manufacturePojo(String.class);
@@ -80,8 +81,15 @@ class SearchServiceTest {
                 "readme.doc"
         );
 
-        List<Resource> resources = (List<Resource>) factory.manufacturePojo(List.class, Resource.class);
-        List<ResourceInfoResponseDTO> expectedDtos = (List<ResourceInfoResponseDTO>) factory.manufacturePojo(List.class, ResourceInfoResponseDTO.class);
+        Resource resource1 = factory.manufacturePojo(Resource.class);
+        Resource resource2 = factory.manufacturePojo(Resource.class);
+        Resource resource3 = factory.manufacturePojo(Resource.class);
+        List<Resource> resources = List.of(resource1, resource2, resource3);
+
+        ResourceInfoResponseDTO dto1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        ResourceInfoResponseDTO dto2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        ResourceInfoResponseDTO dto3 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        List<ResourceInfoResponseDTO> expectedDtos = List.of(dto1, dto2, dto3);
 
         when(props.getBucket()).thenReturn(bucket);
         when(paths.toTechnicalPath(userId, "")).thenReturn(userDirectory);
@@ -110,6 +118,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should filter resources by query")
     void searchWithFiltering() {
+
         long userId = factory.manufacturePojo(Long.class);
         String query = "doc";
         String bucket = factory.manufacturePojo(String.class);
@@ -123,8 +132,14 @@ class SearchServiceTest {
         );
 
         List<String> matchingUserPaths = List.of("document.txt", "documents/file.pdf");
-        List<Resource> matchingResources = (List<Resource>) factory.manufacturePojo(List.class, Resource.class);
-        List<ResourceInfoResponseDTO> expectedDtos = (List<ResourceInfoResponseDTO>) factory.manufacturePojo(List.class, ResourceInfoResponseDTO.class);
+
+        Resource resource1 = factory.manufacturePojo(Resource.class);
+        Resource resource2 = factory.manufacturePojo(Resource.class);
+        List<Resource> matchingResources = List.of(resource1, resource2);
+
+        ResourceInfoResponseDTO dto1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        ResourceInfoResponseDTO dto2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        List<ResourceInfoResponseDTO> expectedDtos = List.of(dto1, dto2);
 
         when(props.getBucket()).thenReturn(bucket);
         when(paths.toTechnicalPath(userId, "")).thenReturn(userDirectory);
@@ -153,6 +168,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should handle case insensitive search")
     void searchCaseInsensitive() {
+
         long userId = factory.manufacturePojo(Long.class);
         String query = "DOC";
         String bucket = factory.manufacturePojo(String.class);
@@ -163,8 +179,13 @@ class SearchServiceTest {
                 userDirectory + "DOCUMENT.pdf"
         );
 
-        List<Resource> resources = (List<Resource>) factory.manufacturePojo(List.class, Resource.class);
-        List<ResourceInfoResponseDTO> expectedDtos = (List<ResourceInfoResponseDTO>) factory.manufacturePojo(List.class, ResourceInfoResponseDTO.class);
+        Resource resource1 = factory.manufacturePojo(Resource.class);
+        Resource resource2 = factory.manufacturePojo(Resource.class);
+        List<Resource> resources = List.of(resource1, resource2);
+
+        ResourceInfoResponseDTO dto1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        ResourceInfoResponseDTO dto2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
+        List<ResourceInfoResponseDTO> expectedDtos = List.of(dto1, dto2);
 
         when(props.getBucket()).thenReturn(bucket);
         when(paths.toTechnicalPath(userId, "")).thenReturn(userDirectory);
@@ -187,6 +208,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should throw InvalidSearchQueryException when query is null")
     void searchNullQuery() {
+
         long userId = factory.manufacturePojo(Long.class);
 
         assertThrows(InvalidSearchQueryException.class, () -> searchService.search(userId, null));
@@ -196,6 +218,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should throw InvalidSearchQueryException when query is empty")
     void searchEmptyQuery() {
+
         long userId = factory.manufacturePojo(Long.class);
 
         assertThrows(InvalidSearchQueryException.class, () -> searchService.search(userId, ""));
@@ -205,6 +228,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should throw InvalidSearchQueryException when query is only whitespace")
     void searchWhitespaceQuery() {
+
         long userId = factory.manufacturePojo(Long.class);
 
         assertThrows(InvalidSearchQueryException.class, () -> searchService.search(userId, "   "));
@@ -214,6 +238,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should return empty list when no resources match query")
     void searchNoMatches() {
+
         long userId = factory.manufacturePojo(Long.class);
         String query = "nonexistent";
         String bucket = factory.manufacturePojo(String.class);
@@ -243,6 +268,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should handle query with special characters")
     void searchSpecialCharacters() {
+
         long userId = factory.manufacturePojo(Long.class);
         String query = "file-2024_v1.2";
         String bucket = factory.manufacturePojo(String.class);
@@ -275,6 +301,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("Should normalize query by trimming and converting to lowercase")
     void searchNormalizesQuery() {
+
         long userId = factory.manufacturePojo(Long.class);
         String rawQuery = "  DOCument  ";
         String bucket = factory.manufacturePojo(String.class);

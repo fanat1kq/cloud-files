@@ -50,3 +50,13 @@ springdoc:
     csrf:
       enabled: false
     disable-swagger-default-url: true
+
+#secrets:
+#  postgres:
+#    username: ${SECRETS_POSTGRES_USERNAME:postgres_test}
+#    password: ${SECRETS_POSTGRES_PASSWORD:postgres_test}
+#    url: ${SECRETS_POSTGRES_URL:jdbc:postgresql://localhost:5432/test}
+#  minio:
+#    url: ${SECRETS_MINIO_URL:http://localhost:9000}
+#    access-key: ${SECRETS_MINIO_ACCESS_KEY:minio_test}
+#    secret-key: ${SECRETS_MINIO_SECRET_KEY:minio_test_pass}

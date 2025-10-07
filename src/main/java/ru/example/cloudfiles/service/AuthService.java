@@ -22,7 +22,6 @@ import ru.example.cloudfiles.security.CustomUserDetails;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -31,6 +30,7 @@ public class AuthService {
     private final SecurityContextRepository securityContextRepository;
     private final UserMapper userMapper;
 
+    @Transactional
     public User signUp(UserRequestDTO request,
                        HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse) {

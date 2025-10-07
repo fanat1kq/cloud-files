@@ -1,6 +1,8 @@
 package ru.example.cloudfiles.service.impl.composition.fileOperations;
 
 import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,11 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
 class FileDownloadServiceTest {
 
     @Mock
@@ -63,8 +60,8 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    @DisplayName("Should prepare download for single file")
-    void prepareDownloadSingleFile() {
+    @DisplayName("Prepare download for single file")
+    void prepareDownloadSingleFile(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/file.txt";
@@ -75,14 +72,14 @@ class FileDownloadServiceTest {
 
         DownloadResult result = fileDownloadService.prepareDownload(userId, path);
 
-        assertNotNull(result);
-        assertNotNull(result.streamingBody());
-        assertTrue(result.contentDisposition().contains(fileName));
+        softly.assertThat(result).isNotNull();
+        softly.assertThat(result.streamingBody()).isNotNull();
+        softly.assertThat(result.contentDisposition()).contains(fileName);
     }
 
     @Test
-    @DisplayName("Should prepare download for directory")
-    void prepareDownloadDirectory() {
+    @DisplayName("Prepare download for directory")
+    void prepareDownloadDirectory(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/";
@@ -95,15 +92,15 @@ class FileDownloadServiceTest {
 
         DownloadResult result = fileDownloadService.prepareDownload(userId, path);
 
-        assertNotNull(result);
-        assertNotNull(result.streamingBody());
-        assertTrue(result.contentDisposition().contains(fileName));
+        softly.assertThat(result).isNotNull();
+        softly.assertThat(result.streamingBody()).isNotNull();
+        softly.assertThat(result.contentDisposition()).contains(fileName);
     }
 
     @Test
     @SneakyThrows
-    @DisplayName("Should create single file response")
-    void createSingleFileResponse() {
+    @DisplayName("Create single file response")
+    void createSingleFileResponse(SoftAssertions softly) {
 
         long userId = 123L;
         String path = "documents/file.txt";
@@ -118,34 +115,32 @@ class FileDownloadServiceTest {
 
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
-        assertNotNull(responseBody);
+        softly.assertThat(responseBody).isNotNull();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         responseBody.writeTo(outputStream);
 
-        assertEquals("file content", outputStream.toString());
+        softly.assertThat(outputStream.toString()).isEqualTo("file content");
     }
 
     @Test
-    @DisplayName("Should extract file name from path")
-    void extractFileNameFromPath() {
+    @DisplayName("Extract file name from path")
+    void extractFileNameFromPath(SoftAssertions softly) {
 
-        assertDoesNotThrow(() -> {
-            long userId = factory.manufacturePojo(Long.class);
-            String path = "documents/file.txt";
-            String resourceName = "user-" + userId + "/documents/file.txt";
+        long userId = factory.manufacturePojo(Long.class);
+        String path = "documents/file.txt";
+        String resourceName = "user-" + userId + "/documents/file.txt";
 
-            when(fileQueryService.findAllNames(userId, path)).thenReturn(List.of(resourceName));
+        when(fileQueryService.findAllNames(userId, path)).thenReturn(List.of(resourceName));
 
-            DownloadResult result = fileDownloadService.prepareDownload(userId, path);
+        DownloadResult result = fileDownloadService.prepareDownload(userId, path);
 
-            assertTrue(result.contentDisposition().contains("file.txt"));
-        });
+        softly.assertThat(result.contentDisposition()).contains("file.txt");
     }
 
     @Test
-    @DisplayName("Should add file to zip")
-    void addFileToZip() {
+    @DisplayName("Add file to zip")
+    void addFileToZip(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/";
@@ -166,17 +161,17 @@ class FileDownloadServiceTest {
 
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
-        assertNotNull(responseBody);
-        assertDoesNotThrow(() -> {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            responseBody.writeTo(outputStream);
-            assertTrue(outputStream.toByteArray().length > 0);
-        });
+        softly.assertThat(responseBody).isNotNull();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        softly.assertThatCode(() -> responseBody.writeTo(outputStream))
+                .doesNotThrowAnyException();
+        softly.assertThat(outputStream.toByteArray().length).isGreaterThan(0);
     }
 
     @Test
-    @DisplayName("Should add directory to zip without content")
-    void addDirectoryToZip() {
+    @DisplayName("Add directory to zip without content")
+    void addDirectoryToZip(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/";
@@ -202,17 +197,17 @@ class FileDownloadServiceTest {
 
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
-        assertNotNull(responseBody);
-        assertDoesNotThrow(() -> {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            responseBody.writeTo(outputStream);
-            assertTrue(outputStream.toByteArray().length > 0);
-        });
+        softly.assertThat(responseBody).isNotNull();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        softly.assertThatCode(() -> responseBody.writeTo(outputStream))
+                .doesNotThrowAnyException();
+        softly.assertThat(outputStream.toByteArray().length).isGreaterThan(0);
     }
 
     @Test
-    @DisplayName("Should throw ResourceNotFoundException when single file download fails")
-    void singleFileDownloadFails() {
+    @DisplayName("Throw ResourceNotFoundException when single file download fails")
+    void singleFileDownloadFails(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/file.txt";
@@ -235,12 +230,13 @@ class FileDownloadServiceTest {
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        assertThrows(ResourceNotFoundException.class, () -> responseBody.writeTo(outputStream));
+        softly.assertThatThrownBy(() -> responseBody.writeTo(outputStream))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
-    @DisplayName("Should throw ZipCreationException when zip creation fails")
-    void zipCreationFails() {
+    @DisplayName("Throw ZipCreationException when zip creation fails")
+    void zipCreationFails(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "documents/";
@@ -266,12 +262,13 @@ class FileDownloadServiceTest {
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        assertThrows(ZipCreationException.class, () -> responseBody.writeTo(outputStream));
+        softly.assertThatThrownBy(() -> responseBody.writeTo(outputStream))
+                .isInstanceOf(ZipCreationException.class);
     }
 
     @Test
-    @DisplayName("Should handle URL encoding in content disposition")
-    void handleUrlEncodingInContentDisposition() {
+    @DisplayName("Handle URL encoding in content disposition")
+    void handleUrlEncodingInContentDisposition(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "files/документ.txt";
@@ -281,14 +278,14 @@ class FileDownloadServiceTest {
 
         DownloadResult result = fileDownloadService.prepareDownload(userId, path);
 
-        assertNotNull(result);
-        assertTrue(result.contentDisposition().contains("UTF-8"));
-        assertTrue(result.contentDisposition().contains("attachment"));
+        softly.assertThat(result).isNotNull();
+        softly.assertThat(result.contentDisposition()).contains("UTF-8");
+        softly.assertThat(result.contentDisposition()).contains("attachment");
     }
 
     @Test
-    @DisplayName("Should handle empty file list")
-    void handleEmptyFileList() {
+    @DisplayName("Handle empty file list")
+    void handleEmptyFileList(SoftAssertions softly) {
 
         long userId = factory.manufacturePojo(Long.class);
         String path = "empty/";
@@ -297,10 +294,10 @@ class FileDownloadServiceTest {
 
         StreamingResponseBody responseBody = fileDownloadService.download(userId, path);
 
-        assertNotNull(responseBody);
-        assertDoesNotThrow(() -> {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            responseBody.writeTo(outputStream);
-        });
+        softly.assertThat(responseBody).isNotNull();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        softly.assertThatCode(() -> responseBody.writeTo(outputStream))
+                .doesNotThrowAnyException();
     }
 }

@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
@@ -43,11 +43,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
+@ActiveProfiles({"test", "test-minio"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@TestPropertySource(properties = {
-        "spring.liquibase.enabled=false",
-        "preliquibase.enabled=false"
-})
 class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     private static final String BUCKET = "test-bucket";

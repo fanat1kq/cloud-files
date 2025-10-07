@@ -19,9 +19,9 @@ import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
+@ActiveProfiles({"test", "test-postgres"})
 @ExtendWith(SoftAssertionsExtension.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
 public class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
 
     @Autowired

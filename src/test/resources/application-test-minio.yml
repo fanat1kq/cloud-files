@@ -1,0 +1,4 @@
+minio:
+  url: ${secrets.minio.url}
+  access-key: ${secrets.minio.access-key}
+  secret-key: ${secrets.minio.secret-key}
