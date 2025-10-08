@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")// indexes = @Index(name = "users_name", columnList = "name", unique = true))
+@Table(name = "users", indexes = @Index(name = "users_name", columnList = "username", unique = true))
 @RequiredArgsConstructor
 public class User implements Serializable {
 

@@ -11,7 +11,7 @@
             <column name="password" value="$2a$10$/J1w7piDYBxj3A0GSUkiTeg4sn5JDb4BLH3bNeORCyVS6ubSR3E66"/>
         </insert>
 
-        <insert schemaName="schema" tableName="users">
+        <insert schemaName="cloud_file_storage" tableName="users">
             <column name="username" value="manager1"/>
             <column name="password" value="$2a$10$rA53Vvir.PVRBLlbcULFT./XXCunYZZSlRYUdoxvT2Gd7uUnsiD12"/>
         </insert>

@@ -14,12 +14,10 @@ services:
 
   minio:
     image: minio/minio
-    #    depends_on:
-    #      - file-storage-minio
     env_file: .env.dev
     ports:
-      - "9000:9000"  # API порт
-      - "9001:9001"  # Console порт
+      - "9000:9000"
+      - "9001:9001"
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
@@ -34,25 +32,6 @@ services:
       - "8082:80"
     networks:
       - file-storage-network
-
-  postgres:
-    image: postgres:17
-    env_file: .env.dev
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "${POSTGRES_PORT}:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - file-storage-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 5s
-      timeout: 3s
-      retries: 10
 
 volumes:
   minio-data:

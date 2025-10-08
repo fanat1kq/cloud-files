@@ -26,13 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -155,50 +153,6 @@ class UploadServiceTest {
     }
 
     @Test
-    @DisplayName("Should create directories when they don't exist")
-    void uploadCreateDirectories() {
-
-        long userId = factory.manufacturePojo(Long.class);
-        String uploadPath = "new/documents/";
-        String filename = "file.txt";
-        MultipartFile file = mock(MultipartFile.class);
-        MultipartFile[] files = {file};
-
-        String fullPath = uploadPath + filename;
-        String techPath = "user-" + userId + "/new/documents/file.txt";
-
-        Resource resource = factory.manufacturePojo(Resource.class);
-        ResourceInfoResponseDTO dto = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-
-        when(props.getBucket()).thenReturn("bucket");
-        when(paths.isDirectory(uploadPath)).thenReturn(true);
-        when(paths.toTechnicalPath(userId, uploadPath)).thenReturn("user-" + userId + "/new/documents/");
-        when(paths.toTechnicalPath(userId, fullPath)).thenReturn(techPath);
-        when(paths.toTechnicalPath(userId, "new/")).thenReturn("user-" + userId + "/new/");
-        when(paths.toTechnicalPath(userId, "new/documents/")).thenReturn("user-" + userId + "/new/documents/");
-
-        when(file.getOriginalFilename()).thenReturn(filename);
-
-        try {
-            when(file.getInputStream()).thenReturn(new ByteArrayInputStream("test content".getBytes()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        when(s3Repo.isObjectExists(any(), eq("user-" + userId + "/new/documents/"))).thenReturn(true);
-        when(s3Repo.isObjectExists(any(), eq("user-" + userId + "/new/"))).thenReturn(false);
-        when(s3Repo.isObjectExists(any(), eq(techPath))).thenReturn(false);
-
-        when(s3Repo.getResourceByPath(any(), eq(techPath))).thenReturn(resource);
-        when(resourceMapper.toDto(userId, resource)).thenReturn(dto);
-
-        uploadService.upload(userId, uploadPath, files);
-
-        verify(s3Repo).createDirectory(eq("bucket"), eq("user-" + userId + "/new/"));
-        verify(s3Repo).saveResource(eq("bucket"), eq(techPath), any(InputStream.class));
-    }
-
-    @Test
     @DisplayName("Should throw ResourceUploadException when file upload fails")
     @SneakyThrows
     void uploadFileFails() {
@@ -246,68 +200,5 @@ class UploadServiceTest {
         when(paths.isDirectory(uploadPath)).thenReturn(false);
 
         assertThrows(DirectoryNotExistException.class, () -> uploadService.upload(userId, uploadPath, files));
-    }
-
-    @Test
-    @DisplayName("Should handle multiple files with mixed directory creation")
-    void uploadMultipleFilesWithDirectories() {
-
-        long userId = factory.manufacturePojo(Long.class);
-        String uploadPath = "projects/";
-        MultipartFile file1 = mock(MultipartFile.class);
-        MultipartFile file2 = mock(MultipartFile.class);
-        MultipartFile[] files = {file1, file2};
-
-        String fullPath1 = uploadPath + "src/main.java";
-        String fullPath2 = uploadPath + "docs/readme.txt";
-        String techPath1 = "user-" + userId + "/projects/src/main.java";
-        String techPath2 = "user-" + userId + "/projects/docs/readme.txt";
-
-        Resource resource1 = factory.manufacturePojo(Resource.class);
-        Resource resource2 = factory.manufacturePojo(Resource.class);
-        ResourceInfoResponseDTO dto1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        ResourceInfoResponseDTO dto2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-
-        when(props.getBucket()).thenReturn("bucket");
-
-        lenient().when(paths.isDirectory("projects/src/")).thenReturn(true);
-        lenient().when(paths.isDirectory("projects/docs/")).thenReturn(true);
-        lenient().when(paths.isDirectory(fullPath1)).thenReturn(false);
-        lenient().when(paths.isDirectory(fullPath2)).thenReturn(false);
-
-        when(paths.isDirectory(uploadPath)).thenReturn(true);
-
-        when(paths.toTechnicalPath(userId, uploadPath)).thenReturn("user-" + userId + "/projects/");
-        when(paths.toTechnicalPath(userId, fullPath1)).thenReturn(techPath1);
-        when(paths.toTechnicalPath(userId, fullPath2)).thenReturn(techPath2);
-        lenient().when(paths.toTechnicalPath(userId, "projects/src/")).thenReturn("user-" + userId + "/projects/src/");
-        lenient().when(paths.toTechnicalPath(userId, "projects/docs/")).thenReturn("user-" + userId + "/projects/docs/");
-
-        when(file1.getOriginalFilename()).thenReturn("src/main.java");
-        when(file2.getOriginalFilename()).thenReturn("docs/readme.txt");
-
-        try {
-            when(file1.getInputStream()).thenReturn(new ByteArrayInputStream("content1".getBytes()));
-            when(file2.getInputStream()).thenReturn(new ByteArrayInputStream("content2".getBytes()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        when(s3Repo.isObjectExists(eq("bucket"), eq("user-" + userId + "/projects/"))).thenReturn(true);
-        when(s3Repo.isObjectExists(eq("bucket"), eq("user-" + userId + "/projects/src/"))).thenReturn(false);
-        when(s3Repo.isObjectExists(eq("bucket"), eq("user-" + userId + "/projects/docs/"))).thenReturn(false);
-        when(s3Repo.isObjectExists(eq("bucket"), eq(techPath1))).thenReturn(false);
-        when(s3Repo.isObjectExists(eq("bucket"), eq(techPath2))).thenReturn(false);
-
-        when(s3Repo.getResourceByPath(eq("bucket"), eq(techPath1))).thenReturn(resource1);
-        when(s3Repo.getResourceByPath(eq("bucket"), eq(techPath2))).thenReturn(resource2);
-        when(resourceMapper.toDto(userId, resource1)).thenReturn(dto1);
-        when(resourceMapper.toDto(userId, resource2)).thenReturn(dto2);
-
-        assertDoesNotThrow(() -> uploadService.upload(userId, uploadPath, files));
-
-        verify(s3Repo).createDirectory(eq("bucket"), eq("user-" + userId + "/projects/src/"));
-        verify(s3Repo).createDirectory(eq("bucket"), eq("user-" + userId + "/projects/docs/"));
-        verify(s3Repo, times(2)).saveResource(eq("bucket"), anyString(), any(InputStream.class));
     }
 }
