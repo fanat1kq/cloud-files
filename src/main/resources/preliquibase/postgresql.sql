@@ -1,2 +1,2 @@
-CREATE SCHEMA IF NOT EXISTS schema;
-CREATE SCHEMA IF NOT EXISTS my_liquibase_schema;
+CREATE SCHEMA IF NOT EXISTS cloud_file_storage;
+CREATE SCHEMA IF NOT EXISTS liquibase_schema;

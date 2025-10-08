@@ -13,18 +13,17 @@ public interface S3Service {
 
     void deleteResource(long userId, String path);
 
-    void createUserDir(long userId);
+    void createUserDirection(long userId);
 
     DownloadResult prepareDownload(long userId, String path);
 
     ResourceInfoResponseDTO moveResource(long userId, String oldPath, String newPath);
 
-    List<ResourceInfoResponseDTO> search(long userId, String query);
+    List<ResourceInfoResponseDTO> searchResource(long userId, String query);
 
-    List<ResourceInfoResponseDTO> upload(long userId, String uploadPath,
-                                         MultipartFile[] files);
+    List<ResourceInfoResponseDTO> uploadResource(long userId, String uploadPath, MultipartFile[] files);
 
-    List<ResourceInfoResponseDTO> getDir(long userId, String path);
+    List<ResourceInfoResponseDTO> getDirection(long userId, String path);
 
-    ResourceInfoResponseDTO createDir(long userId, String path);
+    ResourceInfoResponseDTO createDirection(long userId, String path);
 }

@@ -5,9 +5,6 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     url: ${SPRING_DATASOURCE_URL}
-  jpa:
-    hibernate:
-      ddl-auto: none
   liquibase:
     change-log: classpath:changelog/db.changelog-master.xml
     default-schema: ${DEFAULT_SCHEMA}
@@ -17,12 +14,6 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
-  session:
-    store-type: redis
-    redis:
-      namespace: myapp:session
-      flush-mode: on_save
-      save-mode: on_set_attribute
   servlet:
     multipart:
       enabled: true
@@ -41,22 +32,3 @@ server:
   servlet:
     session:
       timeout: ${SESSION_TIMEOUT}
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    csrf:
-      enabled: false
-    disable-swagger-default-url: true
-
-#secrets:
-#  postgres:
-#    username: ${SECRETS_POSTGRES_USERNAME:postgres_test}
-#    password: ${SECRETS_POSTGRES_PASSWORD:postgres_test}
-#    url: ${SECRETS_POSTGRES_URL:jdbc:postgresql://localhost:5432/test}
-#  minio:
-#    url: ${SECRETS_MINIO_URL:http://localhost:9000}
-#    access-key: ${SECRETS_MINIO_ACCESS_KEY:minio_test}
-#    secret-key: ${SECRETS_MINIO_SECRET_KEY:minio_test_pass}

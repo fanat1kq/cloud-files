@@ -6,14 +6,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.example.cloudfiles.docs.auth.RegisterUserDocs;
 import ru.example.cloudfiles.docs.user.GetUserDocs;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.dto.response.UserResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.AuthService;
 import ru.example.cloudfiles.service.S3Service;
+import ru.example.cloudfiles.service.UserService;
 
 
 @RestController
@@ -22,7 +27,7 @@ import ru.example.cloudfiles.service.S3Service;
 @Validated
 public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
 
     private final S3Service s3Service;
 
@@ -33,8 +38,8 @@ public class UserController {
                                   HttpServletRequest httpServletRequest,
                                   HttpServletResponse httpServletResponse) {
 
-        var user = authService.signUp(request, httpServletRequest, httpServletResponse);
-        s3Service.createUserDir(user.getId());
+        var user = userService.signUp(request, httpServletRequest, httpServletResponse);
+        s3Service.createUserDirection(user.getId());
 
         return new UserResponseDTO(user.getUsername());
     }

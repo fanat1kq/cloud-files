@@ -10,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.example.cloudfiles.dto.ErrorResponse;
-import ru.example.cloudfiles.exception.validation.ForbiddenSymbolException;
 import ru.example.cloudfiles.exception.storageOperationImpl.bucket.BucketCreationException;
 import ru.example.cloudfiles.exception.storageOperationImpl.bucket.BucketDeletionException;
 import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryCreationException;
@@ -26,6 +25,7 @@ import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceSav
 import ru.example.cloudfiles.exception.storageOperationImpl.resource.StorageOperationException;
 import ru.example.cloudfiles.exception.user.UserAlreadyExistsException;
 import ru.example.cloudfiles.exception.user.UserNotFoundException;
+import ru.example.cloudfiles.exception.validation.ForbiddenSymbolException;
 
 import java.util.List;
 
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
 
         log.warn("Validation errors: {}", errors);
 
-        String errorMessage = !errors.isEmpty() ? errors.get(0) : "Validation failed";
+        String errorMessage = !errors.isEmpty() ? errors.getFirst() : "Validation failed";
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ErrorResponse(errorMessage));
     }

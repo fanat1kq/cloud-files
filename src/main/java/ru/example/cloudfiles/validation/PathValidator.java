@@ -14,16 +14,16 @@ public class PathValidator {
     private static final Pattern FORBIDDEN_SYMBOLS = Pattern.compile("[\\\\/:*?\"<>|]");
 
     public void validatePath(String path) {
-                    if (path == null || path.isBlank()) {
-                              throw new EmptyPathException();
-                    }
+        if (path == null || path.isBlank()) {
+            throw new EmptyPathException();
+        }
 
-                    if (FORBIDDEN_SYMBOLS.matcher(path).matches()) {
-                              throw new ForbiddenSymbolException();
-                    }
+        if (FORBIDDEN_SYMBOLS.matcher(path).matches()) {
+            throw new ForbiddenSymbolException();
+        }
 
-                    if (path.contains("//")) {
-                              throw new EmptyPathException();
-                    }
+        if (path.contains("//")) {
+            throw new EmptyPathException();
+        }
     }
 }

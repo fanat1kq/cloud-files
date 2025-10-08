@@ -20,9 +20,14 @@ public class FileDeleteService {
 
     public void deleteResource(long userId, String path) {
 
-        if (!fileQueryService.resourceExists(userId, path))
+        log.info("Delete started - userId: {}, path: '{}'", userId, path);
+
+        if (!fileQueryService.resourceExists(userId, path)) {
+            log.warn("Resource not found for deletion - userId: {}, path: '{}'", userId, path);
             throw new ResourceNotFoundException(path);
+        }
 
         s3Repo.deleteResource(props.getBucket(), paths.toTechnicalPath(userId, path));
+        log.info("Delete completed - userId: {}, path: '{}'", userId, path);
     }
 }

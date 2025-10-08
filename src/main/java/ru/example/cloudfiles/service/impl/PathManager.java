@@ -1,10 +1,10 @@
 package ru.example.cloudfiles.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class PathManager {
 
@@ -15,6 +15,7 @@ public class PathManager {
     }
 
     public String toTechnicalPath(long userId, String userPath) {
+
         return getUserDirectory(userId).concat(userPath);
     }
 
@@ -23,8 +24,7 @@ public class PathManager {
         String userDirectory = getUserDirectory(userId);
 
         return technicalPath.startsWith(userDirectory)
-                ? technicalPath.substring(userDirectory.length())
-                : technicalPath;
+                ? technicalPath.substring(userDirectory.length()) : technicalPath;
     }
 
     public boolean isDirectory(String path) {

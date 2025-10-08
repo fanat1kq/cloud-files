@@ -2,6 +2,7 @@ package ru.example.cloudfiles.service.impl.composition;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
@@ -36,23 +37,23 @@ public class DirectoryOperationsService {
         if (!paths.isDirectory(path)) throw new NotDirectoryException(path);
         if (resourceExists(userId, path)) throw new ResourceAlreadyExistsException(path);
 
-        String techPath = paths.toTechnicalPath(userId, path);
-        s3Repo.createDirectory(props.getBucket(), techPath);
+        String technicalPath = paths.toTechnicalPath(userId, path);
+        s3Repo.createDirectory(props.getBucket(), technicalPath);
 
-        return resourceMapper.toDto(userId, s3Repo.getResourceByPath(props.getBucket(), techPath));
+        return resourceMapper.toDto(userId, s3Repo.getResourceByPath(props.getBucket(), technicalPath));
     }
 
     public List<ResourceInfoResponseDTO> getDir(long userId, String path) {
 
         log.debug("Getting directory contents for userId: {}, path: {}", userId, path);
-        if (!paths.isDirectory(path) && !path.isBlank()) throw new NotDirectoryException(path);
-        if (!path.isBlank() && !resourceExists(userId, path)) throw new ResourceNotFoundException(path);
+        if (!paths.isDirectory(path) && StringUtils.isNotBlank(path)) throw new NotDirectoryException(path);
+        if (StringUtils.isNotBlank(path) && !resourceExists(userId, path)) throw new ResourceNotFoundException(path);
 
         String userDir = paths.getUserDirectory(userId);
         String techPath = paths.toTechnicalPath(userId, path);
 
         return findAllNames(userId, path, false).stream()
-                .filter(name -> !name.equals(userDir) && (path.isBlank() || !name.equals(techPath)))
+                .filter(name -> !name.equals(userDir) && (StringUtils.isBlank(path) || !name.equals(techPath)))
                 .map(name -> resourceMapper.toDto(userId, s3Repo.getResourceByPath(props.getBucket(), name)))
                 .toList();
     }

@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.entity.User;
 import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.AuthService;
 import ru.example.cloudfiles.service.S3Service;
+import ru.example.cloudfiles.service.UserService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,7 +42,7 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private AuthService authService;
+    private UserService userService;
 
     @MockitoBean
     private S3Service s3Service;
@@ -79,7 +79,7 @@ class UserControllerTest {
         saved.setUsername("johnny");
         saved.setPassword("hashed");
 
-        when(authService.signUp(any(UserRequestDTO.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
+        when(userService.signUp(any(UserRequestDTO.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
                 .thenReturn(saved);
 
         mockMvc.perform(post("/api/auth/sign-up")
@@ -88,7 +88,7 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("johnny"));
 
-        verify(s3Service).createUserDir(99L);
+        verify(s3Service).createUserDirection(99L);
     }
 
     @Test

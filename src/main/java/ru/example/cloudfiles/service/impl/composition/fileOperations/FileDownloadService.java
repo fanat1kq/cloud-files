@@ -2,6 +2,7 @@ package ru.example.cloudfiles.service.impl.composition.fileOperations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ContentDisposition;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.example.cloudfiles.config.properties.MinioProperties;
@@ -12,7 +13,6 @@ import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
@@ -31,19 +31,28 @@ public class FileDownloadService {
 
     public DownloadResult prepareDownload(long userId, String path) {
 
-        return new DownloadResult(
-                download(userId, path),
-                "attachment; filename*=UTF-8''" + URLEncoder.encode(extractFileName(path),
-                        StandardCharsets.UTF_8).replace("+", "%20")
+        log.info("Download prepared - userId: {}, path: '{}'", userId, path);
+
+        return new DownloadResult(download(userId, path), ContentDisposition.attachment()
+                .filename(extractFileName(path), StandardCharsets.UTF_8)
+                .build()
+                .toString()
         );
     }
 
     public StreamingResponseBody download(long userId, String path) {
 
+        log.info("Download started - userId: {}, path: '{}'", userId, path);
+
         var resourceNames = fileQueryService.findAllNames(userId, path);
-        return resourceNames.size() == 1 ?
-                createSingleFileResponse(resourceNames.getFirst()) :
-                createZipResponse(userId, resourceNames);
+
+        if (resourceNames.size() == 1) {
+            log.debug("Single file download - userId: {}, file: '{}'", userId, resourceNames.getFirst());
+            return createSingleFileResponse(resourceNames.getFirst());
+        } else {
+            log.debug("ZIP download - userId: {}, files: {}", userId, resourceNames.size());
+            return createZipResponse(userId, resourceNames);
+        }
     }
 
     private String extractFileName(String path) {
@@ -57,7 +66,9 @@ public class FileDownloadService {
         return os -> {
             try (var is = s3Repo.getResourceByPath(props.getBucket(), resourceName).dataStream()) {
                 is.transferTo(os);
+                log.debug("Single file downloaded successfully - file: '{}'", resourceName);
             } catch (IOException e) {
+                log.error("Single file download failed - file: '{}'", resourceName, e);
                 throw new ResourceNotFoundException(resourceName);
             }
         };
@@ -65,9 +76,13 @@ public class FileDownloadService {
 
     private StreamingResponseBody createZipResponse(long userId, List<String> resourceNames) {
 
-        return os -> {
-            try (var zos = new ZipOutputStream(os)) {
-                resourceNames.forEach(name -> addToZip(userId, name, zos));
+        return outputStream -> {
+            try (var zipOutputStream = new ZipOutputStream(outputStream)) {
+                resourceNames.forEach(name -> addToZip(userId, name, zipOutputStream));
+                log.debug("ZIP archive created successfully - files: {}", resourceNames.size());
+            } catch (Exception e) {
+                log.error("ZIP creation failed - userId: {}, files: {}", userId, resourceNames.size(), e);
+                throw e;
             }
         };
     }
@@ -78,12 +93,14 @@ public class FileDownloadService {
             var resource = s3Repo.getResourceByPath(props.getBucket(), resourceName);
             zipOutputStream.putNextEntry(new ZipEntry(paths.toUserPath(userId, resource.path())));
             if (!paths.isDirectory(resource.path())) {
-                try (var is = resource.dataStream()) {
-                    is.transferTo(zipOutputStream);
+                try (var dataStream = resource.dataStream()) {
+                    dataStream.transferTo(zipOutputStream);
                 }
             }
             zipOutputStream.closeEntry();
+            log.trace("File added to ZIP - '{}'", resourceName);
         } catch (IOException e) {
+            log.error("Failed to add file to ZIP - '{}'", resourceName, e);
             throw new ZipCreationException(resourceName, e);
         }
     }

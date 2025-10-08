@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="create-users-table-001" author="fanat1kq">
-        <createTable schemaName="schema" tableName="users" remarks="Таблица пользователей системы">
+        <createTable schemaName="cloud_file_storage" tableName="users" remarks="Таблица пользователей системы">
             <column name="id" type="BIGSERIAL" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

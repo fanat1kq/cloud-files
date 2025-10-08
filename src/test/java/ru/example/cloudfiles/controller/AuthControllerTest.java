@@ -14,7 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.dto.response.UserResponseDTO;
-import ru.example.cloudfiles.service.AuthService;
+import ru.example.cloudfiles.service.UserService;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -35,7 +35,7 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private AuthService authService;
+    private UserService userService;
 
     private PodamFactory factory;
 
@@ -51,7 +51,7 @@ class AuthControllerTest {
         UserRequestDTO request = factory.manufacturePojo(UserRequestDTO.class);
         UserResponseDTO response = factory.manufacturePojo(UserResponseDTO.class);
 
-        when(authService.signIn(any(UserRequestDTO.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
+        when(userService.signIn(any(UserRequestDTO.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
                 .thenReturn(response);
 
         mockMvc.perform(post("/api/auth/sign-in")

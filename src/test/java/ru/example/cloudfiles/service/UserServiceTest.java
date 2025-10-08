@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -55,7 +55,7 @@ class AuthServiceTest {
     private UserMapper userMapper;
 
     @InjectMocks
-    private AuthService authService;
+    private UserService userService;
 
     private PodamFactory factory;
 
@@ -82,7 +82,7 @@ class AuthServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(saved);
         when(userMapper.toCustomUserDetails(saved)).thenReturn(customUser(saved.getId(), saved.getUsername(), "encoded"));
 
-        User result = authService.signUp(req, httpReq, httpRes);
+        User result = userService.signUp(req, httpReq, httpRes);
 
         assertEquals(saved.getId(), result.getId());
         assertEquals(saved.getUsername(), result.getUsername());
@@ -111,7 +111,7 @@ class AuthServiceTest {
         UserResponseDTO dto = factory.manufacturePojo(UserResponseDTO.class);
         when(userMapper.toDto(details)).thenReturn(dto);
 
-        UserResponseDTO result = authService.signIn(req, httpReq, httpRes);
+        UserResponseDTO result = userService.signIn(req, httpReq, httpRes);
 
         assertEquals(dto.username(), result.username());
         verify(securityContextRepository).saveContext(any(SecurityContextImpl.class), eq(httpReq), eq(httpRes));
@@ -129,7 +129,7 @@ class AuthServiceTest {
         when(userDetailsService.loadUserByUsername(req.username())).thenReturn(details);
         when(passwordEncoder.matches(req.password(), details.getPassword())).thenReturn(false);
 
-        assertThrows(BadCredentialsException.class, () -> authService.signIn(req, httpReq, httpRes));
+        assertThrows(BadCredentialsException.class, () -> userService.signIn(req, httpReq, httpRes));
         verify(securityContextRepository, never()).saveContext(any(), any(), any());
     }
 

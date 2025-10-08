@@ -9,7 +9,11 @@ import ru.example.cloudfiles.dto.ErrorResponse;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.dto.response.UserResponseDTO;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Operation(
         summary = "Register a new user",

@@ -184,7 +184,7 @@ class ResourceControllerTest {
                 .size(0L)
                 .type(ResourceType.DIRECTORY)
                 .build();
-        when(s3Service.search(userId, query)).thenReturn(List.of(item));
+        when(s3Service.searchResource(userId, query)).thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/resource/search")
                         .param("query", query)
@@ -209,7 +209,7 @@ class ResourceControllerTest {
                 .size(5L)
                 .type(ResourceType.FILE)
                 .build();
-        when(s3Service.upload(eq(userId), eq(path), any())).thenReturn(List.of(item));
+        when(s3Service.uploadResource(eq(userId), eq(path), any())).thenReturn(List.of(item));
 
         mockMvc.perform(multipart("/api/resource")
                         .file(file1)
@@ -249,7 +249,7 @@ class ResourceControllerTest {
         String query = "search";
         var item1 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
         var item2 = factory.manufacturePojo(ResourceInfoResponseDTO.class);
-        when(s3Service.search(userId, query)).thenReturn(List.of(item1, item2));
+        when(s3Service.searchResource(userId, query)).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/resource/search")
                         .param("query", query)

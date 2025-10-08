@@ -24,24 +24,35 @@ public class FileQueryService {
 
     public ResourceInfoResponseDTO getResource(long userId, String path) {
 
+        log.debug("Get resource - userId: {}, path: '{}'", userId, path);
+
         try {
             var resource = s3Repo.getResourceByPath(props.getBucket(),
                     paths.toTechnicalPath(userId, path));
+            log.trace("Resource found - userId: {}, path: '{}'", userId, path);
             return resourceMapper.toDto(userId, resource);
         } catch (Exception e) {
+            log.warn("Resource not found - userId: {}, path: '{}'", userId, path);
             throw new ResourceNotFoundException(path);
         }
     }
 
     public boolean resourceExists(long userId, String path) {
 
-        return s3Repo.isObjectExists(props.getBucket(),
+        boolean exists = s3Repo.isObjectExists(props.getBucket(),
                 paths.toTechnicalPath(userId, path));
+        log.trace("Resource exists check - userId: {}, path: '{}', exists: {}", userId, path, exists);
+        return exists;
     }
 
     public List<String> findAllNames(long userId, String prefix) {
 
-        return s3Repo.findAllNamesByPrefix(props.getBucket(),
+        log.debug("Find all names - userId: {}, prefix: '{}'", userId, prefix);
+
+        List<String> names = s3Repo.findAllNamesByPrefix(props.getBucket(),
                 paths.toTechnicalPath(userId, prefix), true);
+
+        log.debug("Found {} names for userId: {}, prefix: '{}'", names.size(), userId, prefix);
+        return names;
     }
 }

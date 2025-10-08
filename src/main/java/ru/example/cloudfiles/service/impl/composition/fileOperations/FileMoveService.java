@@ -17,6 +17,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class FileMoveService {
+
     private final S3Repository s3Repo;
     private final FileQueryService fileQueryService;
     private final PathManager paths;
@@ -24,18 +25,24 @@ public class FileMoveService {
 
     public ResourceInfoResponseDTO moveResource(long userId, String oldPath, String newPath) {
 
+        log.info("Move started - userId: {}, from: '{}', to: '{}'", userId, oldPath, newPath);
+
         validateMove(userId, oldPath, newPath);
 
         String oldTech = paths.toTechnicalPath(userId, oldPath);
         String newTech = paths.toTechnicalPath(userId, newPath);
 
         if (paths.isDirectory(oldPath)) {
+            log.debug("Moving directory - userId: {}, items will be copied", userId);
             moveDir(oldTech, newTech);
         } else {
+            log.debug("Moving single file - userId: {}", userId);
             moveFile(oldTech, newTech);
         }
 
         s3Repo.deleteResource(props.getBucket(), oldTech);
+        log.info("Move completed - userId: {}, from: '{}', to: '{}'", userId, oldPath, newPath);
+
         return fileQueryService.getResource(userId, newPath);
     }
 
@@ -45,13 +52,17 @@ public class FileMoveService {
         String newPrefix = newTech.endsWith("/") ? newTech : newTech + "/";
 
         var sourcePaths = s3Repo.findAllNamesByPrefix(props.getBucket(), oldPrefix, true);
+        log.debug("Moving directory - files: {} from: '{}' to: '{}'",
+                sourcePaths.size(), oldPrefix, newPrefix);
 
         sourcePaths.forEach(oldName -> {
             String newName = newPrefix + oldName.substring(oldPrefix.length());
             var resource = s3Repo.getResourceByPath(props.getBucket(), oldName);
             try (var is = resource.dataStream()) {
                 s3Repo.saveResource(props.getBucket(), newName, new ByteArrayInputStream(is.readAllBytes()));
+                log.trace("Directory item moved - from: '{}' to: '{}'", oldName, newName);
             } catch (IOException e) {
+                log.error("Failed to move directory item - from: '{}' to: '{}'", oldName, newName, e);
                 throw new ResourceNotFoundException("Failed to read resource: " + oldName);
             }
         });
@@ -61,15 +72,20 @@ public class FileMoveService {
 
     private void moveFile(String oldTech, String newTech) {
 
+        log.trace("Moving file - from: '{}' to: '{}'", oldTech, newTech);
         var resource = s3Repo.getResourceByPath(props.getBucket(), oldTech);
         s3Repo.saveResource(props.getBucket(), newTech, resource.dataStream());
     }
 
     private void validateMove(long userId, String oldPath, String newPath) {
 
-        if (!fileQueryService.resourceExists(userId, oldPath))
+        if (!fileQueryService.resourceExists(userId, oldPath)) {
+            log.warn("Move failed - source not found: userId: {}, path: '{}'", userId, oldPath);
             throw new ResourceNotFoundException(oldPath);
-        if (fileQueryService.resourceExists(userId, newPath))
+        }
+        if (fileQueryService.resourceExists(userId, newPath)) {
+            log.warn("Move failed - target already exists: userId: {}, path: '{}'", userId, newPath);
             throw new ResourceAlreadyExistsException(newPath);
+        }
     }
 }

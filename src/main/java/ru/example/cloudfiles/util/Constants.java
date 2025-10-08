@@ -2,7 +2,8 @@ package ru.example.cloudfiles.util;
 
 public final class Constants {
 
-    private Constants() {}
+    private Constants() {
+    }
 
     public static final String MESSAGE_FORBIDDEN_CHARACTERS = "Path contains forbidden characters";
     public static final String MESSAGE_USER_EXIST = "User already exists: %s";

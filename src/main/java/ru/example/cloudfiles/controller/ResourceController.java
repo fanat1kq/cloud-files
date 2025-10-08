@@ -8,10 +8,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import ru.example.cloudfiles.docs.storage.resource.*;
+import ru.example.cloudfiles.docs.storage.resource.DeleteResourceDocs;
+import ru.example.cloudfiles.docs.storage.resource.DownloadResourceDocs;
+import ru.example.cloudfiles.docs.storage.resource.GetResourceDocs;
+import ru.example.cloudfiles.docs.storage.resource.MoveResourceDocs;
+import ru.example.cloudfiles.docs.storage.resource.SearchResourceDocs;
+import ru.example.cloudfiles.docs.storage.resource.UploadResourceDocs;
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
 import ru.example.cloudfiles.security.CustomUserDetails;
@@ -95,7 +106,7 @@ public class ResourceController {
                                                 @AuthenticationPrincipal
                                                 CustomUserDetails userDetails) {
 
-        return s3Service.search(userDetails.getId(), query);
+        return s3Service.searchResource(userDetails.getId(), query);
     }
 
 
@@ -109,6 +120,6 @@ public class ResourceController {
             @AuthenticationPrincipal
             CustomUserDetails userDetails) {
 
-        return s3Service.upload(userDetails.getId(), path, files);
+        return s3Service.uploadResource(userDetails.getId(), path, files);
     }
 }

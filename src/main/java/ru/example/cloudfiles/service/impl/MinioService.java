@@ -17,29 +17,28 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class S3ServiceImpl implements S3Service {
+public class MinioService implements S3Service {
 
     private final FileOperationsService fileOps;
-
     private final DirectoryOperationsService dirOps;
-
     private final UploadService uploadService;
-
     private final SearchService searchService;
 
 
     @Override
     public ResourceInfoResponseDTO getResource(long userId, String path) {
+
         return fileOps.getResource(userId, path);
     }
 
     @Override
     public void deleteResource(long userId, String path) {
+
         fileOps.deleteResource(userId, path);
     }
 
     @Override
-    public void createUserDir(long userId) {
+    public void createUserDirection(long userId) {
         dirOps.createUserDir(userId);
     }
 
@@ -55,24 +54,26 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public List<ResourceInfoResponseDTO> search(long userId, String query) {
+    public List<ResourceInfoResponseDTO> searchResource(long userId, String query) {
 
         return searchService.search(userId, query);
     }
 
     @Override
-    public List<ResourceInfoResponseDTO> upload(long userId, String uploadPath, MultipartFile[] files) {
+    public List<ResourceInfoResponseDTO> uploadResource(long userId, String uploadPath, MultipartFile[] files) {
 
         return uploadService.upload(userId, uploadPath, files);
     }
 
     @Override
-    public List<ResourceInfoResponseDTO> getDir(long userId, String path) {
+    public List<ResourceInfoResponseDTO> getDirection(long userId, String path) {
+
         return dirOps.getDir(userId, path);
     }
 
     @Override
-    public ResourceInfoResponseDTO createDir(long userId, String path) {
+    public ResourceInfoResponseDTO createDirection(long userId, String path) {
+
         return dirOps.createDir(userId, path);
     }
 }

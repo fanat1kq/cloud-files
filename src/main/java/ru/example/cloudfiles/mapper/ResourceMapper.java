@@ -2,9 +2,9 @@ package ru.example.cloudfiles.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.dto.ResourceType;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.service.impl.PathManager;
 
 import java.nio.file.Path;

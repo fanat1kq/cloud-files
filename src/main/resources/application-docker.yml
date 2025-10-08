@@ -5,9 +5,6 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     url: ${SPRING_DATASOURCE_URL}
-  jpa:
-    hibernate:
-      ddl-auto: none
   liquibase:
     change-log: classpath:changelog/db.changelog-master.xml
     default-schema: ${DEFAULT_SCHEMA}
@@ -17,12 +14,6 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
-  session:
-    store-type: redis
-    redis:
-      namespace: myapp:session
-      flush-mode: on_save
-      save-mode: on_set_attribute
   servlet:
     multipart:
       enabled: true
@@ -41,12 +32,5 @@ server:
   servlet:
     session:
       timeout: ${SESSION_TIMEOUT}
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    csrf:
-      enabled: false
-    disable-swagger-default-url: true
+      cookie:
+        max-age: ${SESSION_TIME}}
