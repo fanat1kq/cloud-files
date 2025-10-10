@@ -1,5 +1,4 @@
 services:
-
   redis:
     image: redis:latest
     command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
@@ -9,6 +8,17 @@ services:
     ports:
       - "6379:6379"
     restart: unless-stopped
+    networks:
+      - file-storage-network
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    restart: always
+    volumes:
+      - redis_insight:/data
     networks:
       - file-storage-network
 
@@ -36,6 +46,7 @@ services:
 volumes:
   minio-data:
   redis-data:
+  redis_insight:
   postgres-data:
 
 networks:
