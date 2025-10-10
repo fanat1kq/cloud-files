@@ -39,7 +39,7 @@ public class UserController {
                                   HttpServletResponse httpServletResponse) {
 
         var user = userService.signUp(request, httpServletRequest, httpServletResponse);
-        s3Service.createUserDirection(user.getId());
+        s3Service.createUserDirectory(user.getId());
 
         return new UserResponseDTO(user.getUsername());
     }

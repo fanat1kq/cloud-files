@@ -1,0 +1,36 @@
+spring:
+  config:
+    import: optional:file:.env.docker[.properties]
+  datasource:
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
+    default-schema: ${DEFAULT_SCHEMA}
+    liquibase-schema: ${LIQUIBASE_SCHEMA}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE}
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+  buffer-size: ${MINIO_BUFFER_SIZE:1024}
+  user-directory-pattern: ${MINIO_USER_DIRECTORY_PATTERN}
+
+server:
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT}
+      cookie:
+        max-age: ${SESSION_TIME}}

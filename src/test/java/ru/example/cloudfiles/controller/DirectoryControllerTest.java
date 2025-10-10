@@ -98,7 +98,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.FILE)
                 .build();
 
-        when(s3Service.getDirection(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
+        when(s3Service.getDirectory(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
@@ -129,7 +129,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.DIRECTORY)
                 .build();
 
-        when(s3Service.createDirection(eq(userId), eq(path))).thenReturn(created);
+        when(s3Service.createDirectory(eq(userId), eq(path))).thenReturn(created);
 
         mockMvc.perform(post("/api/directory")
                         .param("path", path)
@@ -180,7 +180,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.FILE)
                 .build();
 
-        when(s3Service.getDirection(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
+        when(s3Service.getDirectory(eq(userId), eq(path))).thenReturn(List.of(item1, item2));
 
         mockMvc.perform(get("/api/directory")
                         .param("path", path)
@@ -212,7 +212,7 @@ class DirectoryControllerTest {
                 .type(ResourceType.DIRECTORY)
                 .build();
 
-        when(s3Service.createDirection(eq(userId), eq(path))).thenReturn(created);
+        when(s3Service.createDirectory(eq(userId), eq(path))).thenReturn(created);
 
         mockMvc.perform(post("/api/directory")
                         .param("path", path)

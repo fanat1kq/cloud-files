@@ -8,9 +8,9 @@ import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.example.cloudfiles.exception.storageOperationImpl.S3RepositoryException;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryCreationException;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
+import ru.example.cloudfiles.exception.storageOperation.S3RepositoryException;
+import ru.example.cloudfiles.exception.storageOperation.directory.DirectoryCreationException;
+import ru.example.cloudfiles.exception.storageOperation.directory.DirectoryNotExistException;
 import ru.example.cloudfiles.validation.PathValidator;
 
 import java.io.InputStream;

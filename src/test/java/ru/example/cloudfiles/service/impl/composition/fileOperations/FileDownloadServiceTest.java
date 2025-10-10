@@ -14,8 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.Resource;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.ZipCreationException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.directory.ZipCreationException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 import uk.co.jemos.podam.api.PodamFactory;

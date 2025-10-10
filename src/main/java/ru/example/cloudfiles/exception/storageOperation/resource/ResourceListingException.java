@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.exception.storageOperationImpl.resource;
+package ru.example.cloudfiles.exception.storageOperation.resource;
 
 import static ru.example.cloudfiles.util.Constants.MESSAGE_FAILED_TO_LIST_OBJECTS_WITH_PREFIX;
 

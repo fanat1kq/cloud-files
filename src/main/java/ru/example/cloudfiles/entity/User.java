@@ -12,25 +12,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Getter
 @Setter
 @Entity
 @Table(name = "users", indexes = @Index(name = "users_name", columnList = "username", unique = true))
 @RequiredArgsConstructor
-public class User implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)

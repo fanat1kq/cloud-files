@@ -10,9 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.NotDirectoryException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.directory.NotDirectoryException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -70,7 +70,7 @@ class DirectoryOperationsServiceTest {
         when(paths.getUserDirectory(userId)).thenReturn(userDirectory);
         when(props.getBucket()).thenReturn(bucket);
 
-        directoryOperationsService.createUserDir(userId);
+        directoryOperationsService.createUserDirectory(userId);
 
         verify(s3Repo).createDirectory(bucket, userDirectory);
         verify(paths).getUserDirectory(userId);
@@ -95,7 +95,7 @@ class DirectoryOperationsServiceTest {
         when(s3Repo.getResourceByPath(bucket, techPath)).thenReturn(resource);
         when(resourceMapper.toDto(userId, resource)).thenReturn(expectedDto);
 
-        ResourceInfoResponseDTO result = directoryOperationsService.createDir(userId, path);
+        ResourceInfoResponseDTO result = directoryOperationsService.createDirectory(userId, path);
 
         assertEquals(expectedDto, result);
         verify(s3Repo).createDirectory(bucket, techPath);
@@ -113,7 +113,7 @@ class DirectoryOperationsServiceTest {
 
         when(paths.isDirectory(path)).thenReturn(false);
 
-        assertThrows(NotDirectoryException.class, () -> directoryOperationsService.createDir(userId, path));
+        assertThrows(NotDirectoryException.class, () -> directoryOperationsService.createDirectory(userId, path));
         verify(s3Repo, never()).createDirectory(any(), any());
     }
 
@@ -131,7 +131,7 @@ class DirectoryOperationsServiceTest {
         when(props.getBucket()).thenReturn(bucket);
         when(s3Repo.isObjectExists(bucket, techPath)).thenReturn(true);
 
-        assertThrows(ResourceAlreadyExistsException.class, () -> directoryOperationsService.createDir(userId, path));
+        assertThrows(ResourceAlreadyExistsException.class, () -> directoryOperationsService.createDirectory(userId, path));
         verify(s3Repo, never()).createDirectory(any(), any());
     }
 
@@ -168,7 +168,7 @@ class DirectoryOperationsServiceTest {
             when(resourceMapper.toDto(userId, resource)).thenReturn(expectedDtos.get(i - 1));
         }
 
-        List<ResourceInfoResponseDTO> result = directoryOperationsService.getDir(userId, path);
+        List<ResourceInfoResponseDTO> result = directoryOperationsService.getDirectory(userId, path);
 
         assertEquals(expectedDtos.size(), result.size());
         verify(s3Repo).findAllNamesByPrefix(bucket, techPath, false);
@@ -183,7 +183,7 @@ class DirectoryOperationsServiceTest {
 
         when(paths.isDirectory(path)).thenReturn(false);
 
-        assertThrows(NotDirectoryException.class, () -> directoryOperationsService.getDir(userId, path));
+        assertThrows(NotDirectoryException.class, () -> directoryOperationsService.getDirectory(userId, path));
         verify(s3Repo, never()).findAllNamesByPrefix(any(), any(), anyBoolean());
     }
 
@@ -201,7 +201,7 @@ class DirectoryOperationsServiceTest {
         when(props.getBucket()).thenReturn(bucket);
         when(s3Repo.isObjectExists(bucket, techPath)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> directoryOperationsService.getDir(userId, path));
+        assertThrows(ResourceNotFoundException.class, () -> directoryOperationsService.getDirectory(userId, path));
         verify(s3Repo, never()).findAllNamesByPrefix(any(), any(), anyBoolean());
     }
 
@@ -239,7 +239,7 @@ class DirectoryOperationsServiceTest {
             when(resourceMapper.toDto(userId, resource)).thenReturn(expectedDtos.get(i - 2));
         }
 
-        List<ResourceInfoResponseDTO> result = directoryOperationsService.getDir(userId, path);
+        List<ResourceInfoResponseDTO> result = directoryOperationsService.getDirectory(userId, path);
 
         assertEquals(2, result.size());
 

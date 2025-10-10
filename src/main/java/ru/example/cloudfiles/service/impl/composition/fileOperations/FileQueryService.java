@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -23,8 +23,6 @@ public class FileQueryService {
     private final ResourceMapper resourceMapper;
 
     public ResourceInfoResponseDTO getResource(long userId, String path) {
-
-        log.debug("Get resource - userId: {}, path: '{}'", userId, path);
 
         try {
             var resource = s3Repo.getResourceByPath(props.getBucket(),
@@ -46,8 +44,6 @@ public class FileQueryService {
     }
 
     public List<String> findAllNames(long userId, String prefix) {
-
-        log.debug("Find all names - userId: {}, prefix: '{}'", userId, prefix);
 
         List<String> names = s3Repo.findAllNamesByPrefix(props.getBucket(),
                 paths.toTechnicalPath(userId, prefix), true);

@@ -8,9 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryNotExistException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceUploadException;
+import ru.example.cloudfiles.exception.storageOperation.directory.DirectoryNotExistException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceUploadException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -100,8 +100,8 @@ public class UploadService {
         String filename = Objects.requireNonNull(file.getOriginalFilename(), "Filename is null");
         String techPath = paths.toTechnicalPath(userId, uploadPath + filename);
 
-        try (var is = file.getInputStream()) {
-            s3Repo.saveResource(props.getBucket(), techPath, is);
+        try (var savedResource = file.getInputStream()) {
+            s3Repo.saveResource(props.getBucket(), techPath, savedResource);
             log.debug("File uploaded successfully - userId: {}, file: '{}'", userId, filename);
 
             return s3Repo.getResourceByPath(props.getBucket(), techPath);

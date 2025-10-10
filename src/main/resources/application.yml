@@ -7,9 +7,6 @@ spring:
     store-type: redis
     redis:
       namespace: myapp:session
-  datasource:
-    hikari:
-      maximum-pool-size: 10
 
 springdoc:
   api-docs:

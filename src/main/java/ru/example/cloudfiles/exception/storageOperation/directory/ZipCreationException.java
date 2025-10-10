@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.exception.storageOperationImpl.directory;
+package ru.example.cloudfiles.exception.storageOperation.directory;
 
 import static ru.example.cloudfiles.util.Constants.MESSAGE_FAILED_TO_ADD_FILE_TO_ZIP;
 

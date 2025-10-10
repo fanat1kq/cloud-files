@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.DownloadResult;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.ZipCreationException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.directory.ZipCreationException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
@@ -41,8 +41,6 @@ public class FileDownloadService {
     }
 
     public StreamingResponseBody download(long userId, String path) {
-
-        log.info("Download started - userId: {}, path: '{}'", userId, path);
 
         var resourceNames = fileQueryService.findAllNames(userId, path);
 

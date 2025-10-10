@@ -88,7 +88,7 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("johnny"));
 
-        verify(s3Service).createUserDirection(99L);
+        verify(s3Service).createUserDirectory(99L);
     }
 
     @Test

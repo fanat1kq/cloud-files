@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
 
@@ -24,8 +24,6 @@ public class FileMoveService {
     private final MinioProperties props;
 
     public ResourceInfoResponseDTO moveResource(long userId, String oldPath, String newPath) {
-
-        log.info("Move started - userId: {}, from: '{}', to: '{}'", userId, oldPath, newPath);
 
         validateMove(userId, oldPath, newPath);
 
@@ -52,8 +50,7 @@ public class FileMoveService {
         String newPrefix = newTech.endsWith("/") ? newTech : newTech + "/";
 
         var sourcePaths = s3Repo.findAllNamesByPrefix(props.getBucket(), oldPrefix, true);
-        log.debug("Moving directory - files: {} from: '{}' to: '{}'",
-                sourcePaths.size(), oldPrefix, newPrefix);
+        log.debug("Moving directory - files: {} from: '{}' to: '{}'", sourcePaths.size(), oldPrefix, newPrefix);
 
         sourcePaths.forEach(oldName -> {
             String newName = newPrefix + oldName.substring(oldPrefix.length());

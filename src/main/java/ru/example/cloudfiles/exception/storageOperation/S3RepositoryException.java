@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.exception.storageOperationImpl;
+package ru.example.cloudfiles.exception.storageOperation;
 
 public class S3RepositoryException extends RuntimeException {
 

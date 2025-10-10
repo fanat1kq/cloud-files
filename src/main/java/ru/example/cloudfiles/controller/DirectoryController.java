@@ -37,7 +37,7 @@ public class DirectoryController {
                                                       @AuthenticationPrincipal
                                                       CustomUserDetails userDetails) {
 
-        return s3Service.getDirection(userDetails.getId(), path);
+        return s3Service.getDirectory(userDetails.getId(), path);
     }
 
     @PostMapping
@@ -49,6 +49,6 @@ public class DirectoryController {
                                                    @AuthenticationPrincipal
                                                    CustomUserDetails userDetails) {
 
-        return s3Service.createDirection(userDetails.getId(), path);
+        return s3Service.createDirectory(userDetails.getId(), path);
     }
 }

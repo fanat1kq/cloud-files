@@ -1,6 +1,6 @@
-package ru.example.cloudfiles.exception.storageOperationImpl.directory;
+package ru.example.cloudfiles.exception.storageOperation.directory;
 
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.StorageOperationException;
+import ru.example.cloudfiles.exception.storageOperation.resource.StorageOperationException;
 
 import static ru.example.cloudfiles.util.Constants.MESSAGE_RESOURCE_TO_DELETE_DIRECTORY;
 

@@ -6,9 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.example.cloudfiles.config.properties.MinioProperties;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.NotDirectoryException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceAlreadyExistsException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceNotFoundException;
+import ru.example.cloudfiles.exception.storageOperation.directory.NotDirectoryException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceAlreadyExistsException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
 import ru.example.cloudfiles.mapper.ResourceMapper;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.service.impl.PathManager;
@@ -25,13 +25,13 @@ public class DirectoryOperationsService {
     private final MinioProperties props;
     private final ResourceMapper resourceMapper;
 
-    public void createUserDir(long userId) {
+    public void createUserDirectory(long userId) {
 
         log.debug("Creating user directory for userId: {}", userId);
         s3Repo.createDirectory(props.getBucket(), paths.getUserDirectory(userId));
     }
 
-    public ResourceInfoResponseDTO createDir(long userId, String path) {
+    public ResourceInfoResponseDTO createDirectory(long userId, String path) {
 
         log.debug("Creating directory for userId: {}, path: {}", userId, path);
         if (!paths.isDirectory(path)) throw new NotDirectoryException(path);
@@ -43,7 +43,7 @@ public class DirectoryOperationsService {
         return resourceMapper.toDto(userId, s3Repo.getResourceByPath(props.getBucket(), technicalPath));
     }
 
-    public List<ResourceInfoResponseDTO> getDir(long userId, String path) {
+    public List<ResourceInfoResponseDTO> getDirectory(long userId, String path) {
 
         log.debug("Getting directory contents for userId: {}, path: {}", userId, path);
         if (!paths.isDirectory(path) && StringUtils.isNotBlank(path)) throw new NotDirectoryException(path);

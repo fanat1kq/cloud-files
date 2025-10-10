@@ -1,4 +1,4 @@
-package ru.example.cloudfiles.exception.storageOperationImpl.resource;
+package ru.example.cloudfiles.exception.storageOperation.resource;
 
 public class StorageOperationException extends RuntimeException {
     public StorageOperationException(String message) {

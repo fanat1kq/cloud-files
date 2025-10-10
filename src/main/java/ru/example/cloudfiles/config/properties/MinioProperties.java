@@ -25,8 +25,8 @@ public class MinioProperties {
     private String bucket;
 
     @NotBlank
-    private String userDirectoryPattern = "user-%d-files/";
+    private String userDirectoryPattern;
 
     @NotBlank
-    private int bufferSize = 1024;
+    private int bufferSize;
 }

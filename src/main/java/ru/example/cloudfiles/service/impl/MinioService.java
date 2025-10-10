@@ -38,12 +38,13 @@ public class MinioService implements S3Service {
     }
 
     @Override
-    public void createUserDirection(long userId) {
-        dirOps.createUserDir(userId);
+    public void createUserDirectory(long userId) {
+        dirOps.createUserDirectory(userId);
     }
 
     @Override
     public DownloadResult prepareDownload(long userId, String path) {
+
         return fileOps.prepareDownload(userId, path);
     }
 
@@ -66,14 +67,14 @@ public class MinioService implements S3Service {
     }
 
     @Override
-    public List<ResourceInfoResponseDTO> getDirection(long userId, String path) {
+    public List<ResourceInfoResponseDTO> getDirectory(long userId, String path) {
 
-        return dirOps.getDir(userId, path);
+        return dirOps.getDirectory(userId, path);
     }
 
     @Override
-    public ResourceInfoResponseDTO createDirection(long userId, String path) {
+    public ResourceInfoResponseDTO createDirectory(long userId, String path) {
 
-        return dirOps.createDir(userId, path);
+        return dirOps.createDirectory(userId, path);
     }
 }

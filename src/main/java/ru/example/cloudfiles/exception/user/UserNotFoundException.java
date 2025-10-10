@@ -9,10 +9,6 @@ public class UserNotFoundException extends RuntimeException {
         super(MESSAGE_USER_NOT_FOUND.formatted(username));
     }
 
-    public UserNotFoundException(String username, Throwable cause) {
-        super(MESSAGE_USER_NOT_FOUND.formatted(username), cause);
-    }
-
     public UserNotFoundException(Long userId) {
         super(MESSAGE_USER_NOT_FOUND.formatted(userId));
     }

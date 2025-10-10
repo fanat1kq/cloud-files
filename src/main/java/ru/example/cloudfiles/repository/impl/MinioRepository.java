@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import ru.example.cloudfiles.dto.Resource;
-import ru.example.cloudfiles.exception.storageOperationImpl.directory.DirectoryDeletionException;
-import ru.example.cloudfiles.exception.storageOperationImpl.resource.ResourceDeletionException;
+import ru.example.cloudfiles.exception.storageOperation.directory.DirectoryDeletionException;
+import ru.example.cloudfiles.exception.storageOperation.resource.ResourceDeletionException;
 import ru.example.cloudfiles.repository.S3Repository;
 import ru.example.cloudfiles.repository.impl.composition.DirectoryRepository;
 import ru.example.cloudfiles.repository.impl.composition.ObjectRepository;
@@ -39,8 +39,6 @@ public class MinioRepository implements S3Repository {
 
     @Override
     public void deleteResource(String bucketName, String path) {
-
-        log.debug("Deleting resource - bucket: {}, path: '{}'", bucketName, path);
 
         pathValidator.validatePath(path);
 

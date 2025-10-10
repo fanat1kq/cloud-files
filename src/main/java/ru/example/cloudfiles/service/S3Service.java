@@ -13,7 +13,7 @@ public interface S3Service {
 
     void deleteResource(long userId, String path);
 
-    void createUserDirection(long userId);
+    void createUserDirectory(long userId);
 
     DownloadResult prepareDownload(long userId, String path);
 
@@ -23,7 +23,7 @@ public interface S3Service {
 
     List<ResourceInfoResponseDTO> uploadResource(long userId, String uploadPath, MultipartFile[] files);
 
-    List<ResourceInfoResponseDTO> getDirection(long userId, String path);
+    List<ResourceInfoResponseDTO> getDirectory(long userId, String path);
 
-    ResourceInfoResponseDTO createDirection(long userId, String path);
+    ResourceInfoResponseDTO createDirectory(long userId, String path);
 }
