@@ -148,7 +148,7 @@ jobs:
             docker stop cloudfiles-app || true
             docker rm cloudfiles-app || true
             
-            # Pull нового образа
+            
             docker pull ${{ env.IMAGE_NAME }}:latest
             
             # Запускаем новый контейнер с .env файлом
