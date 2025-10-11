@@ -29,21 +29,20 @@ jobs:
         ports:
           - 5432:5432
 
+      # MinIO без command - используем стандартный образ
       minio:
         image: minio/minio:latest
         env:
           MINIO_ROOT_USER: minio_test
           MINIO_ROOT_PASSWORD: minio_test_pass
-        ports:
-          - 9000:9000
-          - 9001:9001
-        # Command должен быть в отдельной строке без options
-        command: "server /data --console-address :9001"
         options: >-
           --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 9000:9000
+          - 9001:9001
 
     steps:
       - name: Checkout code
@@ -117,24 +116,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
 
@@ -160,7 +149,7 @@ jobs:
             docker rm cloudfiles-app || true
             
             # Pull нового образа
-            docker pull ${{ env.IMAGE_NAME }}:main
+            docker pull ${{ env.IMAGE_NAME }}:latest
             
             # Запускаем новый контейнер с .env файлом
             docker run -d \
@@ -168,7 +157,7 @@ jobs:
               --restart unless-stopped \
               -p 8080:8080 \
               --env-file /opt/cloudfiles/.env \
-              ${{ env.IMAGE_NAME }}:main
+              ${{ env.IMAGE_NAME }}:latest
             
             # Очистка старых образов
             docker image prune -f
