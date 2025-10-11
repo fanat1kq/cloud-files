@@ -34,15 +34,14 @@ jobs:
         env:
           MINIO_ROOT_USER: minio_test
           MINIO_ROOT_PASSWORD: minio_test_pass
-        ports:
-          - 9000:9000
-          - 9001:9001
-        # Command должен быть в отдельной строке без options
         options: >-
           --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 9000:9000
+          - 9001:9001
 
     steps:
       - name: Checkout code
