@@ -38,7 +38,6 @@ jobs:
           - 9000:9000
           - 9001:9001
         # Command должен быть в отдельной строке без options
-        command: "server /data --console-address :9001"
         options: >-
           --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
           --health-interval 10s
