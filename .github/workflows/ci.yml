@@ -35,13 +35,15 @@ jobs:
           MINIO_ROOT_USER: minio_test
           MINIO_ROOT_PASSWORD: minio_test_pass
         options: >-
-          --health-cmd curl --fail http://localhost:9000/minio/health/live
+          --health-cmd "curl --fail http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
           - 9000:9000
-        command: server /data --console-address ":9001"
+          - 9001:9001
+        # Command перенесен в отдельную строку без options
+        command: "server /data --console-address :9001"
 
     steps:
       - name: Checkout code
@@ -59,12 +61,22 @@ jobs:
 
       - name: Wait for services to be ready
         run: |
-          sleep 15
+          sleep 20
+          echo "Waiting for PostgreSQL..."
+          until pg_isready -h localhost -p 5432; do sleep 1; done
+          echo "Waiting for MinIO..."
+          until curl -f http://localhost:9000/minio/health/live; do sleep 1; done
 
       - name: Run tests
         run: ./gradlew test
         env:
           SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test
+          SPRING_DATASOURCE_USERNAME: postgres_test
+          SPRING_DATASOURCE_PASSWORD: postgres_test
+          MINIO_URL: http://localhost:9000
+          MINIO_ACCESS_KEY: minio_test
+          MINIO_SECRET_KEY: minio_test_pass
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -130,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     if: github.ref == 'refs/heads/main'
-    environment: production  # ← Используем Environment
+    environment: production
 
     steps:
       - name: Deploy to VPS
@@ -157,3 +169,6 @@ jobs:
               -p 8080:8080 \
               --env-file /opt/cloudfiles/.env \
               ${{ env.IMAGE_NAME }}:main
+            
+            # Очистка старых образов
+            docker image prune -f

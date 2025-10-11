@@ -1,9 +1,9 @@
 spring:
   config:
-    import: optional:file:.env.docker[.properties]
+    import: optional:file:.env[.properties]
   datasource:
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     url: ${SPRING_DATASOURCE_URL}
   liquibase:
     change-log: classpath:changelog/db.changelog-master.xml
@@ -33,4 +33,4 @@ server:
     session:
       timeout: ${SESSION_TIMEOUT}
       cookie:
-        max-age: ${SESSION_TIME}}
+        max-age: ${SESSION_TIME}
