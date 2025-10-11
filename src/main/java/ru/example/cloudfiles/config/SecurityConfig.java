@@ -83,6 +83,9 @@ public class SecurityConfig {
                         "http://localhost:8082",
                         "http://localhost:80",
                         "http://localhost",
+                        "176.109.106.218:8082",
+                        "176.109.106.218:80",
+                        "176.109.106.218",
                         "http://frontend:80",
                         "http://frontend:8082",
                         "http://frontend"
