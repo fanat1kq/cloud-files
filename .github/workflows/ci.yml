@@ -72,6 +72,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
           script: |
             # Логинимся в Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -91,5 +92,4 @@ jobs:
               --env-file /opt/cloudfiles/.env \
               ${{ env.IMAGE_NAME }}:master
             
-            
-            docker image prune -f
+            docker rmi ${{ env.IMAGE_NAME }}:master || true
