@@ -84,7 +84,7 @@ jobs:
             docker rm cloud-files_app_1 || true
 
             # Pull нового образа
-            docker pull ${{ env.IMAGE_NAME }}:master
+            docker pull --platform linux/amd64 ${{ env.IMAGE_NAME }}:master
 
             # Переходим в директорию и запускаем compose
             cd ~/cloudfiles
