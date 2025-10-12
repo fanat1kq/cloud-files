@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/cloudfiles-app
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/cloud-files_app_1
 
 jobs:
   build-and-push:
@@ -87,15 +87,15 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
             # Останавливаем старый контейнер
-            docker stop cloudfiles-app || true
-            docker rm cloudfiles-app || true
+            docker stop cloud-files_app_1 || true
+            docker rm cloud-files_app_1 || true
             
             # Pull нового образа
             docker pull ${{ env.IMAGE_NAME }}:master
             
             # Запускаем новый контейнер с .env файлом
             docker run -d \
-              --name cloudfiles-app \
+              --name cloud-files_app_1 \
               --restart unless-stopped \
               -p 8080:8080 \
               --env-file /opt/cloudfiles/.env \
