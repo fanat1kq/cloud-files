@@ -74,6 +74,16 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
+            set -x  # Включить вывод всех команд
+            echo "Начинаем деплой на VPS..."
+            
+            # Логинимся в Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            
+            # Ваши текущие команды...
+            
+            echo "Деплой завершен"
+            
             # Логинимся в Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
