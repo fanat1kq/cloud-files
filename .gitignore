@@ -9,6 +9,7 @@ mvnw.cmd
 .mvn/
 .idea
 .env.*
+.env
 
 ### STS ###
 .apt_generated
