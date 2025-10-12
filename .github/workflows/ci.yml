@@ -100,7 +100,7 @@ jobs:
 #              -p 8080:8080 \
 #              --env-file /opt/cloudfiles/.env \
 #              ${{ env.IMAGE_NAME }}:master
-            cd ~/cloudfiles
+            cd /cloudfiles
                     
             docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d
