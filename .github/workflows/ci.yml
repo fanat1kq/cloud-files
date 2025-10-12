@@ -87,7 +87,7 @@ jobs:
             docker pull --platform linux/amd64 ${{ env.IMAGE_NAME }}:master
 
             # Переходим в директорию и запускаем compose
-            cd ~/cloudfiles
+            cd ~/cloud-files
             docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d
 
