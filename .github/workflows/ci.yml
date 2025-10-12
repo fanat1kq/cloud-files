@@ -101,6 +101,7 @@ jobs:
 #              --env-file /opt/cloudfiles/.env \
 #              ${{ env.IMAGE_NAME }}:master
             cd ~/cloudfiles
+                    
             docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d
             
