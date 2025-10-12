@@ -68,21 +68,15 @@ jobs:
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
-        with: # ← Строка 71. Этот отступ должен быть ровно на 2 пробела больше, чем у 'uses'
+        with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            set -x  # Включить вывод всех команд
-
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
+            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
             docker stop cloud-files_app_1 || true
             docker rm cloud-files_app_1 || true
-
             docker pull --platform linux/amd64 ${{ env.IMAGE_NAME }}:master
-
             cd ~/cloud-files
             docker-compose -f docker-compose.prod.yml up -d
-
-            docker rmi $(docker images "${{ env.IMAGE_NAME }}" --filter "before=${{ env.IMAGE_NAME }}:master" -q)
+            docker rmi $(docker images "${{ env.IMAGE_NAME }}" --filter "before=${{ env.IMAGE_NAME }}:master" -q) || true
