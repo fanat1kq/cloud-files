@@ -74,23 +74,15 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -x  # Включить вывод всех команд
-            echo "Начинаем деплой на VPS..."
 
-            # Логинимся в Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # Останавливаем старый контейнер
             docker stop cloud-files_app_1 || true
             docker rm cloud-files_app_1 || true
 
-            # Pull нового образа
             docker pull --platform linux/amd64 ${{ env.IMAGE_NAME }}:master
 
-            # Переходим в директорию и запускаем compose
             cd ~/cloud-files
             docker-compose -f docker-compose.prod.yml up -d
 
-            # Удаляем старый образ
-            
-
-            echo "Деплой завершен"
+            docker rmi $(docker images "${{ env.IMAGE_NAME }}" --filter "before=${{ env.IMAGE_NAME }}:master" -q)
