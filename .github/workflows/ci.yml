@@ -91,5 +91,5 @@ jobs:
               --env-file /opt/cloudfiles/.env \
               ${{ env.IMAGE_NAME }}:master
             
-            # Очистка старых образов
+            
             docker image prune -f
