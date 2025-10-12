@@ -34,9 +34,4 @@ public class AuthController {
 
         return userService.signIn(request, httpServletRequest, httpServletResponse);
     }
-
-    @GetMapping("qwe")
-    public String qwe(){
-        return "hello";
-    }
 }
