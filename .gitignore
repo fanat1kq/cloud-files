@@ -8,7 +8,8 @@ mvnw
 mvnw.cmd
 .mvn/
 .idea
-.env.*
+.env.dev
+.env.docker
 .env
 
 ### STS ###
