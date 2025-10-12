@@ -88,7 +88,6 @@ jobs:
 
             # Переходим в директорию и запускаем compose
             cd ~/cloud-files
-            docker-compose -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.prod.yml up -d
 
             # Удаляем старый образ
