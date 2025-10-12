@@ -3,11 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [master, develop]
-  pull_request:
-    branches: [master, develop]
 
 env:
-  REGISTRY: docker.io
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/cloud-files_app_1
 
 jobs:
