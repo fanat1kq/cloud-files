@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### my config ###
 mvnw
 mvnw.cmd
 .mvn/
@@ -11,6 +12,7 @@ mvnw.cmd
 .env.dev
 .env.docker
 .env
+build-and-push.sh
 
 ### STS ###
 .apt_generated
