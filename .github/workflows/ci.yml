@@ -14,35 +14,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: test
-          POSTGRES_USER: postgres_test
-          POSTGRES_PASSWORD: postgres_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      minio:
-        image: minio/minio:latest
-        env:
-          MINIO_ROOT_USER: minio_test
-          MINIO_ROOT_PASSWORD: minio_test_pass
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 9000:9000
-          - 9001:9001
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,25 +28,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Wait for services to be ready
-        run: |
-          echo "Waiting for services to start..."
-          sleep 30
-          echo "Checking PostgreSQL..."
-          until pg_isready -h localhost -p 5432; do sleep 2; done
-          echo "Checking MinIO..."
-          until curl -f http://localhost:9000/minio/health/live; do sleep 2; done
-
       - name: Run tests
         run: ./gradlew test
-        env:
-          SPRING_PROFILES_ACTIVE: test
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test
-          SPRING_DATASOURCE_USERNAME: postgres_test
-          SPRING_DATASOURCE_PASSWORD: postgres_test
-          MINIO_URL: http://localhost:9000
-          MINIO_ACCESS_KEY: minio_test
-          MINIO_SECRET_KEY: minio_test_pass
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
