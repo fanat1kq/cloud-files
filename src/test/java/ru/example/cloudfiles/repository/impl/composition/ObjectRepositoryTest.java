@@ -154,7 +154,7 @@ class ObjectRepositoryTest extends AbstractMinioTestContainer {
         InputStream invalidStream = new InputStream() {
             @Override
             public int read() throws IOException {
-                throw new IOException("Simulated IO error");
+                throw new IOException("Simulated IO errorq");
             }
         };
 
