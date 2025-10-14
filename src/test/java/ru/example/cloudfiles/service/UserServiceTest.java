@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,6 +55,9 @@ class UserServiceTest {
     @Mock
     private UserMapper userMapper;
 
+    @Captor
+    ArgumentCaptor<SecurityContext> ctxCaptor;
+
     @InjectMocks
     private UserService userService;
 
@@ -87,7 +91,6 @@ class UserServiceTest {
         assertEquals(saved.getId(), result.getId());
         assertEquals(saved.getUsername(), result.getUsername());
 
-        ArgumentCaptor<SecurityContext> ctxCaptor = ArgumentCaptor.forClass(SecurityContext.class);
         verify(securityContextRepository).saveContext(ctxCaptor.capture(), eq(httpReq), eq(httpRes));
         assertNotNull(ctxCaptor.getValue());
         assertNotNull(ctxCaptor.getValue().getAuthentication());
