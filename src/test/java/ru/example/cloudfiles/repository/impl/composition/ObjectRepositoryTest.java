@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.exception.storageOperation.resource.ResourceNotFoundException;
@@ -46,17 +48,21 @@ import static org.mockito.Mockito.doNothing;
 class ObjectRepositoryTest extends AbstractMinioTestContainer {
 
     private static final String BUCKET = "test-bucket";
-
     @Autowired
     private MinioClient minioClient;
-
     @Autowired
     private ObjectRepository objectRepository;
-
     @MockitoBean
     private PathValidator pathValidator;
-
     private PodamFactory factory;
+
+    @DynamicPropertySource
+    public static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("minio.url", AbstractMinioTestContainer::getUrl);
+        registry.add("minio.access-key", AbstractMinioTestContainer::getUsername);
+        registry.add("minio.secret-key", AbstractMinioTestContainer::getPassword);
+        registry.add("minio.bucket", () -> BUCKET);
+    }
 
     @BeforeAll
     static void setUp() {
@@ -85,6 +91,7 @@ class ObjectRepositoryTest extends AbstractMinioTestContainer {
     void cleanup() {
         clearBucket();
     }
+
 
     @Test
     @DisplayName("Should get resource by path and return valid DTO")

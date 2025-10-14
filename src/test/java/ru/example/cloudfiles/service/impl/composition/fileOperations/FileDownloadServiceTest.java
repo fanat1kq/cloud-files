@@ -106,7 +106,7 @@ class FileDownloadServiceTest {
         String path = "documents/file.txt";
         String resourceName = "user-" + userId + "/documents/file.txt";
 
-        InputStream inputStream = new ByteArrayInputStream("file content".getBytes());
+        InputStream inputStream = new ByteArrayInputStream("file content" .getBytes());
         Resource resource = new Resource(resourceName, inputStream, 12L);
 
         when(fileQueryService.findAllNames(userId, path)).thenReturn(List.of(resourceName));
@@ -148,7 +148,7 @@ class FileDownloadServiceTest {
                 "user-" + userId + "/documents/file.txt"
         );
 
-        InputStream inputStream = new ByteArrayInputStream("file content".getBytes());
+        InputStream inputStream = new ByteArrayInputStream("file content" .getBytes());
         Resource resource = new Resource("user-" + userId + "/documents/file.txt", inputStream, 12L);
 
         when(fileQueryService.findAllNames(userId, path)).thenReturn(resourceNames);
@@ -180,8 +180,8 @@ class FileDownloadServiceTest {
                 "user-" + userId + "/documents/file2.txt"
         );
 
-        InputStream stream1 = new ByteArrayInputStream("content1".getBytes());
-        InputStream stream2 = new ByteArrayInputStream("content2".getBytes());
+        InputStream stream1 = new ByteArrayInputStream("content1" .getBytes());
+        InputStream stream2 = new ByteArrayInputStream("content2" .getBytes());
         Resource resource1 = new Resource("user-" + userId + "/documents/file1.txt", stream1, 8L);
         Resource resource2 = new Resource("user-" + userId + "/documents/file2.txt", stream2, 8L);
 

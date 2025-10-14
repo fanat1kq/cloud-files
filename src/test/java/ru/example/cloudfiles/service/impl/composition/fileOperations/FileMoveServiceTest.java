@@ -67,7 +67,7 @@ class FileMoveServiceTest {
         String oldTech = "user-" + userId + "/documents/file.txt";
         String newTech = "user-" + userId + "/archive/file.txt";
 
-        Resource resource = new Resource(oldTech, new ByteArrayInputStream("content".getBytes()), 8L);
+        Resource resource = new Resource(oldTech, new ByteArrayInputStream("content" .getBytes()), 8L);
         ResourceInfoResponseDTO expectedDto = factory.manufacturePojo(ResourceInfoResponseDTO.class);
 
         when(fileQueryService.resourceExists(userId, oldPath)).thenReturn(true);
@@ -101,8 +101,8 @@ class FileMoveServiceTest {
                 "user-" + userId + "/documents/file2.txt"
         );
 
-        Resource resource1 = new Resource(sourcePaths.get(0), new ByteArrayInputStream("content1".getBytes()), 9L);
-        Resource resource2 = new Resource(sourcePaths.get(1), new ByteArrayInputStream("content2".getBytes()), 9L);
+        Resource resource1 = new Resource(sourcePaths.get(0), new ByteArrayInputStream("content1" .getBytes()), 9L);
+        Resource resource2 = new Resource(sourcePaths.get(1), new ByteArrayInputStream("content2" .getBytes()), 9L);
         ResourceInfoResponseDTO expectedDto = factory.manufacturePojo(ResourceInfoResponseDTO.class);
 
         when(fileQueryService.resourceExists(userId, oldPath)).thenReturn(true);
@@ -173,7 +173,7 @@ class FileMoveServiceTest {
                 "user-" + userId + "/documents/file1.txt"
         );
 
-        Resource resource = new Resource(sourcePaths.getFirst(), new ByteArrayInputStream("content".getBytes()), 8L);
+        Resource resource = new Resource(sourcePaths.getFirst(), new ByteArrayInputStream("content" .getBytes()), 8L);
         ResourceInfoResponseDTO expectedDto = factory.manufacturePojo(ResourceInfoResponseDTO.class);
 
         when(fileQueryService.resourceExists(userId, oldPath)).thenReturn(true);

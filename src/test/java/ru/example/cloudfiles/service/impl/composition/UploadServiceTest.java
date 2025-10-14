@@ -94,8 +94,8 @@ class UploadServiceTest {
         when(file2.getOriginalFilename()).thenReturn(filename2);
 
         try {
-            when(file1.getInputStream()).thenReturn(new ByteArrayInputStream("content1".getBytes()));
-            when(file2.getInputStream()).thenReturn(new ByteArrayInputStream("content2".getBytes()));
+            when(file1.getInputStream()).thenReturn(new ByteArrayInputStream("content1" .getBytes()));
+            when(file2.getInputStream()).thenReturn(new ByteArrayInputStream("content2" .getBytes()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

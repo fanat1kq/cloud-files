@@ -2,8 +2,6 @@ package ru.example.cloudfiles.repository;
 
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,22 +20,12 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @ExtendWith(SoftAssertionsExtension.class)
 @Sql("/test-data.sql")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
+class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
 
     @Autowired
     private UserRepository userRepository;
 
     private PodamFactory factory;
-
-    @BeforeAll
-    static void setUp() {
-        POSTGRES_CONTAINER.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        POSTGRES_CONTAINER.stop();
-    }
 
     @BeforeEach
     void init() {
