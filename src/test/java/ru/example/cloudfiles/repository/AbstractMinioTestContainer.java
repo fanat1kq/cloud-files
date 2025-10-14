@@ -1,11 +1,15 @@
 package ru.example.cloudfiles.repository;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public abstract class AbstractMinioTestContainer {
+
+    private static final String BUCKET = "test-bucket";
 
     @Container
     public static MinIOContainer MINIO_CONTAINER = new MinIOContainer("minio/minio:latest")
@@ -25,5 +29,11 @@ public abstract class AbstractMinioTestContainer {
         return MINIO_CONTAINER.getS3URL();
     }
 
-
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("minio.url", AbstractMinioTestContainer::getUrl);
+        registry.add("minio.access-key", AbstractMinioTestContainer::getUsername);
+        registry.add("minio.secret-key", AbstractMinioTestContainer::getPassword);
+        registry.add("minio.bucket", () -> BUCKET);
+    }
 }

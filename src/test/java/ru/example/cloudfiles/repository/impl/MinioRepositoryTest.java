@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import ru.example.cloudfiles.dto.Resource;
 import ru.example.cloudfiles.repository.AbstractMinioTestContainer;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -35,7 +33,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles({"test", "test-minio"})
+@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class MinioRepositoryTest extends AbstractMinioTestContainer {
 
@@ -48,14 +46,6 @@ class MinioRepositoryTest extends AbstractMinioTestContainer {
     private MinioRepository minioRepository;
 
     private PodamFactory factory;
-
-    @DynamicPropertySource
-    static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("minio.url", AbstractMinioTestContainer::getUrl);
-        registry.add("minio.access-key", AbstractMinioTestContainer::getUsername);
-        registry.add("minio.secret-key", AbstractMinioTestContainer::getPassword);
-        registry.add("minio.bucket", () -> BUCKET);
-    }
 
     @BeforeAll
     static void setUp() {

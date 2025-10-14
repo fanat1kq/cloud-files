@@ -1,5 +1,0 @@
-spring:
-  datasource:
-    url: ${secrets.postgres.url}
-    username: ${secrets.postgres.username}
-    password: ${secrets.postgres.password}

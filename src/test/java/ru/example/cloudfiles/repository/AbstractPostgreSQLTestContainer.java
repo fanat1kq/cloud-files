@@ -1,5 +1,7 @@
 package ru.example.cloudfiles.repository;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
@@ -18,5 +20,13 @@ public abstract class AbstractPostgreSQLTestContainer {
 
     public static String getUrl() {
         return POSTGRES_CONTAINER.getJdbcUrl();
+    }
+
+    @DynamicPropertySource
+    public static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", AbstractPostgreSQLTestContainer::getUrl);
+        registry.add("spring.datasource.username", AbstractPostgreSQLTestContainer::getUsername);
+        registry.add("spring.datasource.password", AbstractPostgreSQLTestContainer::getPassword);
+
     }
 }
