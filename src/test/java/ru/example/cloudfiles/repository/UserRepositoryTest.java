@@ -1,12 +1,12 @@
 package ru.example.cloudfiles.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,12 +19,11 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @ActiveProfiles("test")
 @ExtendWith(SoftAssertionsExtension.class)
 @Sql("/test-data.sql")
+@RequiredArgsConstructor
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest extends AbstractPostgreSQLTestContainer {
 
-    @Autowired
-    private UserRepository userRepository;
-
+    private final UserRepository userRepository;
     private PodamFactory factory;
 
     @BeforeEach
