@@ -21,7 +21,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @WebMvcTest
 @AutoConfigureMockMvc(addFilters = false)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // Для @BeforeAll
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseWebMvcTest {
 
     @Autowired

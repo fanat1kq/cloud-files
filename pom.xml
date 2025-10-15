@@ -27,6 +27,7 @@
         <openapi.version>2.8.13</openapi.version>
         <podam.version>8.0.2.RELEASE</podam.version>
         <testcontainer.version>1.21.3</testcontainer.version>
+        <maven.failsafe-plugin.version>3.5.4</maven.failsafe-plugin.version>
     </properties>
 
     <dependencies>
@@ -189,6 +190,21 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
