@@ -8,7 +8,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class AbstractMinioTestContainer {
 
     @Container
-    public static MinIOContainer MINIO_CONTAINER = new MinIOContainer("minio/minio:latest")
+    public static MinIOContainer MINIO_CONTAINER = new MinIOContainer("minio/minio")
             .withUserName("minioTest")
             .withPassword("minioTestPass")
             .withExposedPorts(9000);
