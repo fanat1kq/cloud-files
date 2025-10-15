@@ -6,6 +6,13 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="insert-base-users-001" author="fanat1kq">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM cloud_file_storage.users
+                WHERE username IN ('admin', 'manager1')
+            </sqlCheck>
+        </preConditions>
+
         <insert schemaName="cloud_file_storage" tableName="users">
             <column name="username" value="admin"/>
             <column name="password" value="$2a$10$/J1w7piDYBxj3A0GSUkiTeg4sn5JDb4BLH3bNeORCyVS6ubSR3E66"/>
