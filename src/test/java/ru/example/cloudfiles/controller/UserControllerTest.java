@@ -1,30 +1,15 @@
 package ru.example.cloudfiles.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import ru.example.cloudfiles.dto.request.UserRequestDTO;
 import ru.example.cloudfiles.entity.User;
-import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.S3Service;
-import ru.example.cloudfiles.service.UserService;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,42 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RequiredArgsConstructor
-@WebMvcTest(controllers = UserController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class UserControllerTest {
-
-    private final MockMvc mockMvc;
-
-    private final ObjectMapper objectMapper;
-
-    @MockitoBean
-    private UserService userService;
-
-    @MockitoBean
-    private S3Service s3Service;
-
-    private static RequestPostProcessor withCustomUser(long id, String username) {
-
-        return request -> {
-            CustomUserDetails userDetails = new CustomUserDetails();
-            userDetails.setId(id);
-            userDetails.setUsername(username);
-            userDetails.setPassword("password");
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    "password",
-                    userDetails.getAuthorities()
-            );
-
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(securityContext);
-
-            return request;
-        };
-    }
+class UserControllerTest extends BaseWebMvcTest {
 
     @Test
     @SneakyThrows

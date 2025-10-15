@@ -1,30 +1,15 @@
 package ru.example.cloudfiles.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.example.cloudfiles.dto.DownloadResult;
 import ru.example.cloudfiles.dto.ResourceType;
 import ru.example.cloudfiles.dto.response.ResourceInfoResponseDTO;
-import ru.example.cloudfiles.security.CustomUserDetails;
-import ru.example.cloudfiles.service.S3Service;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -41,45 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RequiredArgsConstructor
-@WebMvcTest(controllers = ResourceController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class ResourceControllerTest {
-
-    private final MockMvc mockMvc;
-
-    @MockitoBean
-    private S3Service s3Service;
-
-    private PodamFactory factory;
-
-
-    private static RequestPostProcessor withCustomUser(long id, String username) {
-
-        return request -> {
-            CustomUserDetails userDetails = new CustomUserDetails();
-            userDetails.setId(id);
-            userDetails.setUsername(username);
-            userDetails.setPassword("password");
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    "password",
-                    userDetails.getAuthorities()
-            );
-
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(securityContext);
-
-            return request;
-        };
-    }
-
-    @BeforeEach
-    void setUp() {
-        factory = new PodamFactoryImpl();
-    }
+class ResourceControllerTest extends BaseWebMvcTest {
 
     @Test
     @SneakyThrows
